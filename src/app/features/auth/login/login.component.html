@@ -1,0 +1,39 @@
+<div class="login-page">
+  <nz-card class="login-card">
+    <div class="login-logo">
+      <img src="assets/logo.jpeg" alt="Mueblería El Castor" onerror="this.style.display='none'" />
+      <h2>Mueblería El Castor</h2>
+    </div>
+
+    @if (errorMsg()) {
+      <nz-alert nzType="error" [nzMessage]="errorMsg()!" nzShowIcon class="login-error" />
+    }
+
+    <form nz-form [formGroup]="form" (ngSubmit)="submit()" nzLayout="vertical">
+      <nz-form-item>
+        <nz-form-label nzRequired>Correo</nz-form-label>
+        <nz-form-control nzErrorTip="Correo inválido">
+          <nz-input-group [nzPrefix]="mailIcon">
+            <input nz-input formControlName="email" type="email" placeholder="usuario@castor.gt" />
+          </nz-input-group>
+          <ng-template #mailIcon><span nz-icon nzType="mail"></span></ng-template>
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label nzRequired>Contraseña</nz-form-label>
+        <nz-form-control nzErrorTip="Ingrese su contraseña">
+          <nz-input-group [nzPrefix]="lockIcon">
+            <input nz-input formControlName="password" type="password" placeholder="••••••••" />
+          </nz-input-group>
+          <ng-template #lockIcon><span nz-icon nzType="lock"></span></ng-template>
+        </nz-form-control>
+      </nz-form-item>
+
+      <button nz-button nzType="primary" nzBlock nzSize="large"
+        [nzLoading]="isLoading()" type="submit">
+        Entrar
+      </button>
+    </form>
+  </nz-card>
+</div>

@@ -1,0 +1,26 @@
+<div class="shell-wrap">
+  <header class="shell-header">
+    <span class="brand">El Castor</span>
+    <div class="header-user" nz-dropdown [nzDropdownMenu]="userMenu" nzPlacement="bottomRight">
+      <span nz-icon nzType="user"></span>
+      <span class="username">{{ currentUser()?.full_name }}</span>
+      <span nz-icon nzType="down"></span>
+    </div>
+    <nz-dropdown-menu #userMenu="nzDropdownMenu">
+      <ul nz-menu>
+        <li nz-menu-item disabled>{{ currentUser()?.email }}</li>
+        <li nz-menu-divider></li>
+        <li nz-menu-item (click)="logout()">
+          <span nz-icon nzType="logout"></span>
+          Cerrar sesión
+        </li>
+      </ul>
+    </nz-dropdown-menu>
+  </header>
+
+  <main class="shell-content">
+    <router-outlet />
+  </main>
+
+  <app-bottom-nav />
+</div>

@@ -1,3 +1,36 @@
 import { Routes } from '@angular/router';
+import { authGuard } from './core/guards/auth.guard';
+import { cajaRoleGuard } from './core/guards/caja-role.guard';
 
-export const routes: Routes = [];
+export const routes: Routes = [
+  { path: '', redirectTo: 'caja', pathMatch: 'full' },
+  {
+    path: 'login',
+    loadComponent: () =>
+      import('./features/auth/login/login.component').then(m => m.LoginComponent),
+  },
+  {
+    path: '',
+    canActivate: [authGuard, cajaRoleGuard],
+    loadComponent: () =>
+      import('./layout/app-shell/app-shell.component').then(m => m.AppShellComponent),
+    children: [
+      {
+        path: 'caja',
+        loadChildren: () =>
+          import('./features/caja/caja.routes').then(m => m.cajaRoutes),
+      },
+      {
+        path: 'mis-ventas',
+        loadComponent: () =>
+          import('./features/mis-ventas/mis-ventas.component').then(m => m.MisVentasComponent),
+      },
+      {
+        path: 'mi-rendimiento',
+        loadComponent: () =>
+          import('./features/mi-rendimiento/mi-rendimiento.component').then(m => m.MiRendimientoComponent),
+      },
+    ],
+  },
+  { path: '**', redirectTo: 'caja' },
+];

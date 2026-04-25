@@ -1,0 +1,38 @@
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background: #3d3432;
+  display: flex;
+  align-items: stretch;
+  z-index: 100;
+  border-top: 2px solid #c85a1a;
+}
+
+.nav-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  color: rgba(245, 230, 211, 0.6);
+  text-decoration: none;
+  font-size: 10px;
+  transition: color 0.15s;
+
+  [nz-icon] {
+    font-size: 20px;
+  }
+
+  &.active,
+  &:active {
+    color: #c85a1a;
+  }
+}
+
+.nav-label {
+  line-height: 1;
+}

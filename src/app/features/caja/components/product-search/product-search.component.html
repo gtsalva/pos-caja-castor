@@ -1,0 +1,30 @@
+<div class="search-wrap">
+  <nz-input-group [nzSuffix]="searchIcon" class="search-bar">
+    <input nz-input placeholder="Buscar producto o SKU..."
+      type="search" (input)="onInput($event)" />
+  </nz-input-group>
+  <ng-template #searchIcon><span nz-icon nzType="search"></span></ng-template>
+</div>
+
+@if (isLoading()) {
+  <div class="search-loading">
+    <nz-spin nzSize="large" />
+  </div>
+} @else if (products().length === 0) {
+  <nz-empty nzNotFoundContent="Sin resultados" class="search-empty" />
+} @else {
+  <div class="product-grid">
+    @for (p of products(); track p.product_id) {
+      <div class="product-card">
+        <div class="product-name">{{ p.name }}</div>
+        <div class="product-sku">{{ p.sku }}</div>
+        <div class="product-footer">
+          <span class="product-price">{{ p.unit_price | currency:'GTQ':'symbol':'1.2-2':'es-GT' }}</span>
+          <nz-tag [nzColor]="p.stock > 0 ? 'green' : 'red'">
+            {{ p.stock > 0 ? 'Stock: ' + p.stock : 'Agotado' }}
+          </nz-tag>
+        </div>
+      </div>
+    }
+  </div>
+}

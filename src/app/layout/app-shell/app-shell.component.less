@@ -1,0 +1,50 @@
+.shell-wrap {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: #faf7f5;
+}
+
+.shell-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  height: 56px;
+  background: #3d3432;
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  gap: 12px;
+}
+
+.brand {
+  flex: 1;
+  color: #f5e6d3;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.header-user {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #f5e6d3;
+  cursor: pointer;
+  font-size: 13px;
+
+  &:active {
+    color: #fff;
+  }
+}
+
+.username {
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.shell-content {
+  flex: 1;
+  padding-bottom: 60px; // bottom nav height
+}
