@@ -3,7 +3,6 @@ import { authGuard } from './core/guards/auth.guard';
 import { cajaRoleGuard } from './core/guards/caja-role.guard';
 
 export const routes: Routes = [
-  { path: '', redirectTo: 'caja', pathMatch: 'full' },
   {
     path: 'login',
     loadComponent: () =>
@@ -15,6 +14,7 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./layout/app-shell/app-shell.component').then(m => m.AppShellComponent),
     children: [
+      { path: '', redirectTo: 'caja', pathMatch: 'full' },
       {
         path: 'caja',
         loadChildren: () =>
