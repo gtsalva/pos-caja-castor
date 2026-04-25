@@ -5,11 +5,10 @@ import { map } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment';
 import { PaginatedResult, Product } from '../../../shared/models/product.model';
 
-interface ApiListResponse<T> {
-  data: T[];
-  total: number;
-  page: number;
-  limit: number;
+interface ApiPaginatedResponse<T> {
+  data: PaginatedResult<T>;
+  message: string;
+  statusCode: number;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -30,9 +29,7 @@ export class CajaApiService {
     if (category_id) params = params.set('category_id', category_id);
 
     return this.http
-      .get<ApiListResponse<Product>>(`${environment.apiUrl}/products`, { params })
-      .pipe(
-        map(res => ({ data: res.data, total: res.total, page: res.page, limit: res.limit }))
-      );
+      .get<ApiPaginatedResponse<Product>>(`${environment.apiUrl}/products`, { params })
+      .pipe(map(res => res.data));
   }
 }
