@@ -359,7 +359,7 @@ Reglas estrictas:
 
 ### Prerequisitos
 - Node 20 LTS (`node -v` → `v20.x.x`)
-- Angular CLI 18: `npm install -g @angular/cli@18`
+- Angular CLI 19: `npm install -g @angular/cli@19`
 
 ### Crear el proyecto (solo primera vez)
 ```bash
@@ -374,9 +374,9 @@ ng new pos-caja \
 cd pos-caja
 ```
 
-### Instalar NG Zorro 18
+### Instalar NG Zorro 19
 ```bash
-ng add ng-zorro-antd@18
+ng add ng-zorro-antd@19
 # Cuando pregunte:
 #   Icon style?           → outline
 #   Set up custom theme?  → Yes
@@ -469,7 +469,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 ```typescript
 export const environment = {
   production: false,
-  apiUrl: 'http://localhost:3000/api',
+  apiUrl: 'http://localhost:3001/api',
 };
 ```
 
@@ -486,10 +486,20 @@ export const environment = {
 ng serve   # http://localhost:4200
 ```
 
+---
+
+## Gotchas Conocidos
+
+| # | Gotcha | Fix |
+|---|--------|-----|
+| 1 | **Signal timing en guards post-login** — `cajaRoleGuard` leía `currentUser()?.role` (computed signal) justo después de `router.navigate()`. En ese punto el computed puede no haber propagado aún → guard redirige a `/login`. | Usar `auth.isLoggedIn()` que lee `_token` (WritableSignal — siempre sincrónico). Regla: en guards que corren inmediatamente tras navigate programático, leer WritableSignal directo, no computed. |
+| 2 | **TransformInterceptor double-wrap** — Respuestas paginadas llegan como `{ data: { data: T[], total, page, limit }, message, statusCode }`, NO con `total` en la raíz. | Usar `ApiPaginatedResponse<T>` con `data: PaginatedResult<T>` y mapear `res.data`. |
+| 3 | **JWT sin `name`** — Si el backend no incluye `name` en el payload, `restoreUserFromToken()` no puede reconstruir `full_name` en refresh de página. | `JwtStrategy.validate()` debe retornar `name: user.full_name`. |
+
 ### Git (repositorio propio de pos-caja)
 ```bash
 git init
 git add .
-git commit -m "chore: initial Angular 18 scaffold"
+git commit -m "chore: initial Angular 19 scaffold"
 ```
 
