@@ -66,6 +66,20 @@ export class CajaApiService {
       .pipe(map(res => res.data));
   }
 
+  getSale(sale_id: string): Observable<Sale> {
+    return this.http
+      .get<ApiResponse<Sale>>(`${environment.apiUrl}/sales/${sale_id}`)
+      .pipe(map(res => res.data));
+  }
+
+  uploadVoucher(blob: Blob): Observable<{ url: string }> {
+    const form = new FormData();
+    form.append('file', blob, 'voucher.pdf');
+    return this.http
+      .post<ApiResponse<{ url: string }>>(`${environment.apiUrl}/storage/upload`, form)
+      .pipe(map(res => res.data));
+  }
+
   getMySales(from_date?: string, page = 1, limit = 50): Observable<PaginatedResult<Sale>> {
     let params = new HttpParams()
       .set('page', String(page))
