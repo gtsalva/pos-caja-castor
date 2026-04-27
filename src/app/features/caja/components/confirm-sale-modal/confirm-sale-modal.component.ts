@@ -11,13 +11,14 @@ import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
 import { NzMessageService } from 'ng-zorro-antd/message';
-import { switchMap } from 'rxjs/operators';
+import { forkJoin, Observable } from 'rxjs';
+import { switchMap, map } from 'rxjs/operators';
 import { CartService } from '../../services/cart.service';
 import { CajaApiService } from '../../services/caja-api.service';
 import { VoucherService } from '../../services/voucher.service';
 import { PaymentMethod, Sale } from '../../../../shared/models/sale.model';
 
-type Step = 'payment' | 'voucher';
+type Step = 'payment' | 'voucher' | 'success';
 
 @Component({
   selector: 'app-confirm-sale-modal',
@@ -51,6 +52,8 @@ export class ConfirmSaleModalComponent {
   readonly paymentMethod = signal<PaymentMethod>('CASH');
   readonly authNumber = signal('');
   readonly processing = signal(false);
+  readonly receiptFile = signal<File | null>(null);
+  readonly confirmedSale = signal<Sale | null>(null);
 
   readonly paymentLabels: Record<PaymentMethod, string> = {
     CASH: 'Efectivo',
@@ -64,9 +67,13 @@ export class ConfirmSaleModalComponent {
     !this.requiresAuth() || this.authNumber().trim().length > 0
   );
 
-  readonly modalTitle = computed(() =>
-    this.step() === 'payment' ? 'Confirmar venta' : 'Comprobante'
-  );
+  readonly modalTitle = computed(() => {
+    switch (this.step()) {
+      case 'payment': return 'Confirmar venta';
+      case 'voucher': return 'Comprobante';
+      case 'success': return 'Venta registrada';
+    }
+  });
 
   goToVoucher(): void {
     this.step.set('voucher');
@@ -74,6 +81,15 @@ export class ConfirmSaleModalComponent {
 
   goBack(): void {
     this.step.set('payment');
+  }
+
+  handleReceiptFile(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    this.receiptFile.set(input.files?.[0] ?? null);
+  }
+
+  clearReceiptFile(): void {
+    this.receiptFile.set(null);
   }
 
   confirm(): void {
@@ -91,28 +107,39 @@ export class ConfirmSaleModalComponent {
       payment_reference: this.requiresAuth() ? this.authNumber().trim() : undefined,
     });
 
-    this.api.uploadVoucher(voucherBlob).pipe(
-      switchMap(({ url }) => {
+    const receipt = this.receiptFile();
+
+    type Uploads = { voucher_url: string; receipt_url: string | undefined };
+
+    const uploads$: Observable<Uploads> = receipt
+      ? forkJoin({
+          voucher: this.api.uploadVoucher(voucherBlob),
+          receipt: this.api.uploadReceipt(receipt),
+        }).pipe(map(r => ({ voucher_url: r.voucher.url, receipt_url: r.receipt.url })))
+      : this.api.uploadVoucher(voucherBlob).pipe(
+          map(r => ({ voucher_url: r.url, receipt_url: undefined as string | undefined })),
+        );
+
+    uploads$.pipe(
+      switchMap(({ voucher_url, receipt_url }: Uploads) => {
         const payload = this.cart.buildPayload(
           this.paymentMethod(),
           this.requiresAuth() ? this.authNumber().trim() : undefined,
-          url,
+          voucher_url,
+          receipt_url,
         );
         return this.api.createSale(payload);
       }),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe({
-      next: sale => {
+      next: (sale: Sale) => {
         this.processing.set(false);
+        this.confirmedSale.set(sale);
         this.cart.clear();
-        this.paymentMethod.set('CASH');
-        this.authNumber.set('');
-        this.step.set('payment');
         this.saleCompleted.emit(sale);
-        this.message.success(`Venta ${sale.sale_number} registrada`);
-        this.closed.emit();
+        this.step.set('success');
       },
-      error: err => {
+      error: (err: { error?: { message?: string } }) => {
         this.processing.set(false);
         const msg = err?.error?.message ?? 'Error al registrar la venta';
         this.message.error(msg);
@@ -120,9 +147,19 @@ export class ConfirmSaleModalComponent {
     });
   }
 
+  closeSuccess(): void {
+    this.confirmedSale.set(null);
+    this.paymentMethod.set('CASH');
+    this.authNumber.set('');
+    this.receiptFile.set(null);
+    this.step.set('payment');
+    this.closed.emit();
+  }
+
   cancel(): void {
     this.step.set('payment');
     this.authNumber.set('');
+    this.receiptFile.set(null);
     this.closed.emit();
   }
 }

@@ -14,6 +14,7 @@ export interface CreateSalePayload {
   client_id: string;
   payment_reference?: string;
   payment_document_url?: string;
+  payment_receipt_url?: string;
   items: { product_id: string; quantity: number }[];
 }
 
@@ -25,6 +26,7 @@ export interface Sale {
   total: number;
   payment_reference: string | null;
   payment_document_url: string | null;
+  payment_receipt_url: string | null;
   created_at: string;
   client: { client_id: string; full_name: string; nit: string | null; billing_address: string | null } | null;
   salesperson: { user_id: string; full_name: string };

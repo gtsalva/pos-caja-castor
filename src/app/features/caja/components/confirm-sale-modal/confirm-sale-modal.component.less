@@ -162,3 +162,140 @@
   font-size: 12px;
   color: #8c7b75;
 }
+
+.voucher-receipt-attached {
+  margin-top: 4px;
+  color: #8c7b75;
+}
+
+// Receipt upload in payment step
+.receipt-upload {
+  margin-top: 16px;
+
+  &-label {
+    font-size: 13px;
+    color: #3d3432;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+
+  &-optional {
+    font-weight: 400;
+    color: #8c7b75;
+    font-size: 12px;
+    margin-left: 4px;
+  }
+}
+
+.receipt-file-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border: 1px dashed #d9d9d9;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  color: #3d3432;
+  transition: border-color 0.2s;
+
+  &:hover {
+    border-color: #c85a1a;
+    color: #c85a1a;
+  }
+}
+
+.receipt-file-selected {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: #f5e6d3;
+  border-radius: 6px;
+  font-size: 13px;
+  color: #3d3432;
+}
+
+.receipt-file-name {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+// Success step
+.success-header {
+  text-align: center;
+  padding: 8px 0 4px;
+}
+
+.success-icon {
+  font-size: 48px;
+  color: #52c41a;
+}
+
+.success-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #3d3432;
+  margin-top: 8px;
+}
+
+.success-number {
+  font-size: 13px;
+  color: #8c7b75;
+  margin-top: 4px;
+  font-family: monospace;
+}
+
+.success-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.success-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+  color: #3d3432;
+
+  span { color: #8c7b75; }
+}
+
+.success-total-row {
+  font-size: 16px;
+  strong { color: #c85a1a; }
+}
+
+.success-docs {
+  &-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: #8c7b75;
+    letter-spacing: 0.05em;
+    margin-bottom: 10px;
+  }
+}
+
+.success-doc-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border: 1px solid #e8e8e8;
+  border-radius: 8px;
+  color: #3d3432;
+  font-size: 13px;
+  text-decoration: none;
+  margin-bottom: 8px;
+  transition: border-color 0.2s, color 0.2s;
+
+  &:hover {
+    border-color: #c85a1a;
+    color: #c85a1a;
+  }
+
+  .anticon { font-size: 16px; color: #c85a1a; }
+}

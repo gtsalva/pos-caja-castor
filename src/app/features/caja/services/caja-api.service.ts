@@ -80,6 +80,14 @@ export class CajaApiService {
       .pipe(map(res => res.data));
   }
 
+  uploadReceipt(file: File): Observable<{ url: string }> {
+    const form = new FormData();
+    form.append('file', file, file.name);
+    return this.http
+      .post<ApiResponse<{ url: string }>>(`${environment.apiUrl}/storage/upload-receipt`, form)
+      .pipe(map(res => res.data));
+  }
+
   getMySales(from_date?: string, page = 1, limit = 50): Observable<PaginatedResult<Sale>> {
     let params = new HttpParams()
       .set('page', String(page))
