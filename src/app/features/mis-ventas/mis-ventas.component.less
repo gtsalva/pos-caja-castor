@@ -69,13 +69,120 @@
 }
 
 .detail-client {
-  font-size: 15px;
-  margin-bottom: 12px;
-  color: #3d3432;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #f5e6d3;
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin-bottom: 4px;
+
+  &-icon {
+    font-size: 20px;
+    color: #c85a1a;
+    flex-shrink: 0;
+  }
+
+  &-info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  &-name {
+    font-size: 15px;
+    font-weight: 600;
+    color: #3d3432;
+  }
+
+  &-nit {
+    font-size: 12px;
+    color: #8c7b75;
+    margin-top: 1px;
+  }
+}
+
+.detail-loading {
+  display: flex;
+  justify-content: center;
+  padding: 48px 0;
 }
 
 .detail-total {
   margin-top: 16px;
   text-align: right;
   font-size: 16px;
+}
+
+.detail-docs-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: #8c7b75;
+  letter-spacing: 0.05em;
+  margin-bottom: 8px;
+}
+
+.detail-docs {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.detail-doc-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid #e8e8e8;
+  border-radius: 8px;
+  background: #fff;
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 0.2s, background 0.2s;
+
+  &:active {
+    background: #f5e6d3;
+    border-color: #c85a1a;
+  }
+}
+
+.detail-doc-icon {
+  font-size: 20px;
+  flex-shrink: 0;
+
+  &.pdf { color: #c85a1a; }
+  &.image { color: #1677ff; }
+}
+
+.detail-doc-text {
+  flex: 1;
+  font-size: 14px;
+  color: #3d3432;
+}
+
+.detail-doc-arrow {
+  font-size: 12px;
+  color: #8c7b75;
+}
+
+.doc-viewer-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 72vh;
+}
+
+.doc-viewer-iframe {
+  width: 100%;
+  height: 72vh;
+  border: none;
+  display: block;
+}
+
+.doc-viewer-image {
+  width: 100%;
+  height: 72vh;
+  object-fit: contain;
+  display: block;
+  background: #f0f0f0;
 }

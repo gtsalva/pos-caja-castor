@@ -80,6 +80,10 @@ export class CajaApiService {
       .pipe(map(res => res.data));
   }
 
+  getDocumentBlob(url: string): Observable<Blob> {
+    return this.http.get(url, { responseType: 'blob' });
+  }
+
   uploadReceipt(file: File): Observable<{ url: string }> {
     const form = new FormData();
     form.append('file', file, file.name);
