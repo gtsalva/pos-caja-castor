@@ -31,7 +31,7 @@
           </div>
           <div class="venta-right">
             <span class="venta-total">
-              {{ sale.total | currency:'Q ':'symbol':'1.2-2':'es-GT' }}
+              {{ sale.total | currency:'Q ':'symbol':'1.2-2':'en-US' }}
             </span>
             <nz-tag [nzColor]="sale.status === 'COMPLETED' ? 'success' : 'error'">
               {{ sale.status === 'COMPLETED' ? 'Completada' : 'Anulada' }}
@@ -51,27 +51,43 @@
   (nzOnClose)="closeDrawer()"
 >
   <ng-container *nzDrawerContent>
-    @if (selectedSale(); as sale) {
-      @if (sale.client) {
-        <div class="detail-client">
-          {{ sale.client.full_name }}
-          @if (sale.client.nit) { · NIT: {{ sale.client.nit }} }
+    @if (isLoadingDetail()) {
+      <div class="detail-loading">
+        <nz-spin nzTip="Cargando detalle..." />
+      </div>
+    } @else {
+      @if (selectedSale(); as sale) {
+      <div class="detail-client">
+        <span nz-icon nzType="user" nzTheme="outline" class="detail-client-icon"></span>
+        <div class="detail-client-info">
+          <div class="detail-client-name">{{ sale.client?.full_name ?? 'Sin cliente' }}</div>
+          @if (sale.client?.nit) {
+            <div class="detail-client-nit">NIT: {{ sale.client!.nit }}</div>
+          }
         </div>
-        <nz-divider />
-      }
+      </div>
+
+      <nz-divider />
 
       <nz-descriptions nzBordered [nzColumn]="1" nzSize="small">
+        <nz-descriptions-item nzTitle="Método de pago">
+          {{ paymentLabels[sale.payment_method] }}
+        </nz-descriptions-item>
+        <nz-descriptions-item nzTitle="Hora">
+          {{ sale.created_at | date:'HH:mm' }}
+        </nz-descriptions-item>
         @for (item of sale.items; track item.sale_item_id) {
           <nz-descriptions-item [nzTitle]="item.product_name">
-            {{ item.quantity }} × {{ item.unit_price | currency:'Q ':'symbol':'1.2-2':'es-GT' }}
-            = {{ item.subtotal | currency:'Q ':'symbol':'1.2-2':'es-GT' }}
+            {{ item.quantity }} × {{ item.unit_price | currency:'Q ':'symbol':'1.2-2':'en-US' }}
+            = {{ item.subtotal | currency:'Q ':'symbol':'1.2-2':'en-US' }}
           </nz-descriptions-item>
         }
       </nz-descriptions>
 
       <div class="detail-total">
-        Total: <strong>{{ sale.total | currency:'Q ':'symbol':'1.2-2':'es-GT' }}</strong>
+        Total: <strong>{{ sale.total | currency:'Q ':'symbol':'1.2-2':'en-US' }}</strong>
       </div>
+      }
     }
   </ng-container>
 </nz-drawer>
