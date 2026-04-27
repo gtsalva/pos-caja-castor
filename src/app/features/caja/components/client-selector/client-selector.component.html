@@ -1,0 +1,78 @@
+<div class="client-selector">
+  <nz-input-group [nzSuffix]="clientSuffix" [nzPrefix]="clientPrefix">
+    <input
+      nz-input
+      placeholder="Buscar cliente (nombre, NIT, teléfono)..."
+      [value]="searchText()"
+      (input)="onSearchInput($any($event.target).value)"
+      (blur)="showDropdown.set(false)"
+    />
+  </nz-input-group>
+
+  <ng-template #clientPrefix>
+    <span nz-icon nzType="user"></span>
+  </ng-template>
+
+  <ng-template #clientSuffix>
+    @if (searching()) {
+      <span nz-icon nzType="loading" nzTheme="outline"></span>
+    } @else if (selectedClient()) {
+      <span nz-icon nzType="check-circle" nzTheme="fill" class="icon-success" (mousedown)="clearClient()"></span>
+    }
+  </ng-template>
+
+  @if (showDropdown() && (results().length > 0 || searchText().length >= 2)) {
+    <div class="client-dropdown">
+      @for (c of results(); track c.client_id) {
+        <div class="client-option" (mousedown)="selectClient(c)">
+          <div class="client-option-name">{{ c.full_name }}</div>
+          <div class="client-option-sub">
+            @if (c.nit) { <span>NIT: {{ c.nit }}</span> }
+            @if (c.phone) { <span>· {{ c.phone }}</span> }
+          </div>
+        </div>
+      }
+      <div class="client-option client-option-new" (mousedown)="openNewModal()">
+        <span nz-icon nzType="plus-circle" nzTheme="outline"></span>
+        Crear "{{ searchText() }}" como nuevo cliente
+      </div>
+    </div>
+  }
+</div>
+
+<nz-modal
+  [nzVisible]="showNewModal()"
+  nzTitle="Nuevo cliente"
+  [nzOkLoading]="saving()"
+  nzOkText="Guardar"
+  nzCancelText="Cancelar"
+  (nzOnOk)="saveNewClient()"
+  (nzOnCancel)="showNewModal.set(false)"
+>
+  <ng-container *nzModalContent>
+    <nz-form-item>
+      <nz-form-label [nzRequired]="true">Nombre</nz-form-label>
+      <nz-form-control>
+        <input nz-input [(ngModel)]="newClient.full_name" placeholder="Nombre completo" />
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-label>Teléfono</nz-form-label>
+      <nz-form-control>
+        <input nz-input [(ngModel)]="newClient.phone" placeholder="+502 5555-0000" inputmode="tel" />
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-label>NIT</nz-form-label>
+      <nz-form-control>
+        <input nz-input [(ngModel)]="newClient.nit" placeholder="1234567-8" />
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-label>Correo</nz-form-label>
+      <nz-form-control>
+        <input nz-input [(ngModel)]="newClient.email" placeholder="correo@ejemplo.com" inputmode="email" />
+      </nz-form-control>
+    </nz-form-item>
+  </ng-container>
+</nz-modal>

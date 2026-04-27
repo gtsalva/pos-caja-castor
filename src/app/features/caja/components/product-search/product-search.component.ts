@@ -19,8 +19,13 @@ export class ProductSearchComponent {
   readonly isLoading = input(false);
 
   readonly queryChange = output<string>();
+  readonly productSelected = output<Product>();
 
   onInput(event: Event): void {
     this.queryChange.emit((event.target as HTMLInputElement).value);
+  }
+
+  selectProduct(product: Product): void {
+    if (product.stock > 0) this.productSelected.emit(product);
   }
 }

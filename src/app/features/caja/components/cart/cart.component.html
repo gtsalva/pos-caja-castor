@@ -1,0 +1,56 @@
+<div class="cart-wrap">
+  <div class="cart-client">
+    <app-client-selector (clientSelected)="onClientSelected($event)" />
+  </div>
+
+  @if (cart.isEmpty()) {
+    <nz-empty nzNotFoundContent="Agrega productos al carrito" class="cart-empty" />
+  } @else {
+    <nz-list class="cart-list">
+      @for (item of cart.items(); track item.product_id) {
+        <nz-list-item class="cart-item">
+          <div class="cart-item-info">
+            <div class="cart-item-name">{{ item.name }}</div>
+            <div class="cart-item-sku">{{ item.sku }}</div>
+          </div>
+          <div class="cart-item-controls">
+            <nz-input-number
+              [ngModel]="item.quantity"
+              [nzMin]="1"
+              [nzMax]="item.stock"
+              [nzStep]="1"
+              nzSize="small"
+              (ngModelChange)="onQuantityChange(item, $event ?? 1)"
+            />
+            <span class="cart-item-subtotal">
+              {{ item.unit_price * item.quantity | currency:'Q ':'symbol':'1.2-2':'es-GT' }}
+            </span>
+            <button nz-button nzType="text" nzDanger nzSize="small" (click)="removeItem(item)">
+              <span nz-icon nzType="delete"></span>
+            </button>
+          </div>
+        </nz-list-item>
+      }
+    </nz-list>
+
+    <nz-divider class="cart-divider" />
+
+    <div class="cart-total">
+      <span class="cart-total-label">Total</span>
+      <span class="cart-total-amount">
+        {{ cart.total() | currency:'Q ':'symbol':'1.2-2':'es-GT' }}
+      </span>
+    </div>
+
+    <button
+      nz-button
+      nzType="primary"
+      nzSize="large"
+      nzBlock
+      class="cart-confirm-btn"
+      (click)="confirm()"
+    >
+      Confirmar venta
+    </button>
+  }
+</div>

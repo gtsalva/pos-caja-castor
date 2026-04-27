@@ -15,11 +15,11 @@
 } @else {
   <div class="product-grid">
     @for (p of products(); track p.product_id) {
-      <div class="product-card">
+      <div class="product-card" [class.product-card--out]="p.stock <= 0" (click)="selectProduct(p)">
         <div class="product-name">{{ p.name }}</div>
         <div class="product-sku">{{ p.sku }}</div>
         <div class="product-footer">
-          <span class="product-price">{{ p.unit_price | currency:'GTQ':'symbol':'1.2-2':'es-GT' }}</span>
+          <span class="product-price">{{ p.unit_price | currency:'Q ':'symbol':'1.2-2':'es-GT' }}</span>
           <nz-tag [nzColor]="p.stock > 0 ? 'green' : 'red'">
             {{ p.stock > 0 ? 'Stock: ' + p.stock : 'Agotado' }}
           </nz-tag>

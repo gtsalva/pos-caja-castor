@@ -1,0 +1,38 @@
+<div class="caja-shell">
+  <app-product-search
+    [products]="products()"
+    [isLoading]="isLoading()"
+    (queryChange)="onQuery($event)"
+    (productSelected)="onProductSelected($event)"
+  />
+
+  <button
+    nz-button
+    nzType="primary"
+    nzShape="circle"
+    class="cart-fab"
+    (click)="openCart()"
+  >
+    <nz-badge [nzCount]="cart.itemCount()" [nzOverflowCount]="99">
+      <span nz-icon nzType="shopping-cart" nzTheme="outline" class="cart-icon"></span>
+    </nz-badge>
+  </button>
+
+  <nz-drawer
+    [nzVisible]="cartVisible()"
+    nzPlacement="bottom"
+    nzHeight="85vh"
+    nzTitle="Carrito"
+    (nzOnClose)="cartVisible.set(false)"
+  >
+    <ng-container *nzDrawerContent>
+      <app-cart (confirmRequested)="openConfirmModal()" />
+    </ng-container>
+  </nz-drawer>
+
+  <app-confirm-sale-modal
+    [visible]="confirmVisible()"
+    (closed)="confirmVisible.set(false)"
+    (saleCompleted)="onSaleCompleted($event)"
+  />
+</div>

@@ -4,9 +4,23 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment';
 import { PaginatedResult, Product } from '../../../shared/models/product.model';
+import { Client, ClientsResult, CreateClientPayload } from '../../../shared/models/client.model';
+import { CreateSalePayload, Sale } from '../../../shared/models/sale.model';
+
+interface ApiResponse<T> {
+  data: T;
+  message: string;
+  statusCode: number;
+}
 
 interface ApiPaginatedResponse<T> {
   data: PaginatedResult<T>;
+  message: string;
+  statusCode: number;
+}
+
+interface ApiClientsResponse {
+  data: ClientsResult;
   message: string;
   statusCode: number;
 }
@@ -30,6 +44,25 @@ export class CajaApiService {
 
     return this.http
       .get<ApiPaginatedResponse<Product>>(`${environment.apiUrl}/products`, { params })
+      .pipe(map(res => res.data));
+  }
+
+  searchClients(search: string): Observable<Client[]> {
+    const params = new HttpParams().set('search', search);
+    return this.http
+      .get<ApiClientsResponse>(`${environment.apiUrl}/clients`, { params })
+      .pipe(map(res => res.data.data));
+  }
+
+  createClient(payload: CreateClientPayload): Observable<Client> {
+    return this.http
+      .post<ApiResponse<Client>>(`${environment.apiUrl}/clients`, payload)
+      .pipe(map(res => res.data));
+  }
+
+  createSale(payload: CreateSalePayload): Observable<Sale> {
+    return this.http
+      .post<ApiResponse<Sale>>(`${environment.apiUrl}/sales`, payload)
       .pipe(map(res => res.data));
   }
 }

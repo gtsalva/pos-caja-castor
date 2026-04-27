@@ -1,0 +1,51 @@
+<nz-modal
+  [nzVisible]="visible()"
+  nzTitle="Confirmar venta"
+  [nzOkLoading]="processing()"
+  nzOkText="Registrar venta"
+  nzCancelText="Cancelar"
+  (nzOnOk)="confirm()"
+  (nzOnCancel)="cancel()"
+>
+  <ng-container *nzModalContent>
+
+    @if (cart.client()) {
+      <div class="sale-client">
+        <span nz-icon nzType="user" nzTheme="outline"></span>
+        <span>{{ cart.client()!.full_name }}</span>
+        @if (cart.client()!.nit) {
+          <nz-tag>NIT: {{ cart.client()!.nit }}</nz-tag>
+        }
+      </div>
+    }
+
+    <nz-descriptions nzBordered [nzColumn]="1" nzSize="small" class="sale-items">
+      @for (item of cart.items(); track item.product_id) {
+        <nz-descriptions-item [nzTitle]="item.name">
+          {{ item.quantity }} × {{ item.unit_price | currency:'Q ':'symbol':'1.2-2':'es-GT' }}
+          = {{ item.unit_price * item.quantity | currency:'Q ':'symbol':'1.2-2':'es-GT' }}
+        </nz-descriptions-item>
+      }
+    </nz-descriptions>
+
+    <div class="sale-total">
+      Total: <strong>{{ cart.total() | currency:'Q ':'symbol':'1.2-2':'es-GT' }}</strong>
+    </div>
+
+    <div class="sale-payment">
+      <div class="sale-payment-label">Método de pago</div>
+      <nz-radio-group [(ngModel)]="paymentMethod" nzButtonStyle="solid" class="payment-group">
+        <label nz-radio-button nzValue="CASH">
+          <span nz-icon nzType="dollar"></span> Efectivo
+        </label>
+        <label nz-radio-button nzValue="CARD">
+          <span nz-icon nzType="credit-card"></span> Tarjeta
+        </label>
+        <label nz-radio-button nzValue="TRANSFER">
+          <span nz-icon nzType="swap"></span> Transferencia
+        </label>
+      </nz-radio-group>
+    </div>
+
+  </ng-container>
+</nz-modal>

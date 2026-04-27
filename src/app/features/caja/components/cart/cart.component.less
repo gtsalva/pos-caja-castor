@@ -1,0 +1,96 @@
+.cart-wrap {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 12px;
+  gap: 12px;
+
+  .cart-client {
+    flex-shrink: 0;
+  }
+
+  .cart-empty {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .cart-list {
+    flex: 1;
+    overflow-y: auto;
+
+    .cart-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      gap: 8px;
+
+      .cart-item-info {
+        flex: 1;
+        min-width: 0;
+
+        .cart-item-name {
+          font-weight: 500;
+          font-size: 14px;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+
+        .cart-item-sku {
+          font-size: 11px;
+          color: #8c8c8c;
+        }
+      }
+
+      .cart-item-controls {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-shrink: 0;
+
+        nz-input-number {
+          width: 64px;
+        }
+
+        .cart-item-subtotal {
+          font-weight: 600;
+          font-size: 13px;
+          min-width: 72px;
+          text-align: right;
+        }
+      }
+    }
+  }
+
+  .cart-divider {
+    margin: 4px 0;
+  }
+
+  .cart-total {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 4px;
+
+    .cart-total-label {
+      font-size: 16px;
+      font-weight: 500;
+    }
+
+    .cart-total-amount {
+      font-size: 20px;
+      font-weight: 700;
+      color: #C85A1A;
+    }
+  }
+
+  .cart-confirm-btn {
+    flex-shrink: 0;
+    height: 52px;
+    font-size: 16px;
+    font-weight: 600;
+  }
+}
