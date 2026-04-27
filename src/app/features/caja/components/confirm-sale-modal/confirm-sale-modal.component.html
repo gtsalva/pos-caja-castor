@@ -34,7 +34,7 @@
 
     <div class="sale-payment">
       <div class="sale-payment-label">Método de pago</div>
-      <nz-radio-group [(ngModel)]="paymentMethod" nzButtonStyle="solid" class="payment-group">
+      <nz-radio-group [ngModel]="paymentMethod()" (ngModelChange)="paymentMethod.set($event)" nzButtonStyle="solid" class="payment-group">
         <label nz-radio-button nzValue="CASH">
           <span nz-icon nzType="dollar"></span> Efectivo
         </label>

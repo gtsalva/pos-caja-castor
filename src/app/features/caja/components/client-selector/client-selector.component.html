@@ -22,7 +22,7 @@
   </ng-template>
 
   @if (showDropdown() && (results().length > 0 || searchText().length >= 2)) {
-    <div class="client-dropdown">
+    <div class="client-dropdown" (mousedown)="$event.preventDefault()">
       @for (c of results(); track c.client_id) {
         <div class="client-option" (mousedown)="selectClient(c)">
           <div class="client-option-name">{{ c.full_name }}</div>
