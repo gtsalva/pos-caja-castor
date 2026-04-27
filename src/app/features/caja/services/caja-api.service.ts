@@ -65,4 +65,16 @@ export class CajaApiService {
       .post<ApiResponse<Sale>>(`${environment.apiUrl}/sales`, payload)
       .pipe(map(res => res.data));
   }
+
+  getMySales(from_date?: string, page = 1, limit = 50): Observable<PaginatedResult<Sale>> {
+    let params = new HttpParams()
+      .set('page', String(page))
+      .set('limit', String(limit));
+
+    if (from_date) params = params.set('from_date', from_date);
+
+    return this.http
+      .get<ApiPaginatedResponse<Sale>>(`${environment.apiUrl}/sales/my`, { params })
+      .pipe(map(res => res.data));
+  }
 }

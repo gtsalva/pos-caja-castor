@@ -1,0 +1,77 @@
+<div class="mis-ventas">
+  <div class="mis-ventas-header">
+    <h3 class="mis-ventas-title">Mis ventas del día</h3>
+    <nz-statistic
+      nzTitle="Total hoy"
+      [nzValue]="totalHoy()"
+      nzPrefix="Q"
+      [nzValueStyle]="{ color: '#C85A1A', fontSize: '20px' }"
+    />
+  </div>
+
+  @if (isLoading()) {
+    <div class="mis-ventas-loading">
+      <nz-spin nzTip="Cargando ventas..." />
+    </div>
+  } @else if (sales().length === 0) {
+    <nz-empty nzNotFoundContent="Aún no tienes ventas hoy" />
+  } @else {
+    <nz-list nzBordered class="ventas-list">
+      @for (sale of sales(); track sale.sale_id) {
+        <nz-list-item class="venta-item" (click)="openDetail(sale)">
+          <div class="venta-info">
+            <div class="venta-number">{{ sale.sale_number }}</div>
+            <div class="venta-meta">
+              {{ sale.created_at | date:'HH:mm' }} ·
+              {{ paymentLabels[sale.payment_method] }}
+              @if (sale.client) {
+                · {{ sale.client.full_name }}
+              }
+            </div>
+          </div>
+          <div class="venta-right">
+            <span class="venta-total">
+              {{ sale.total | currency:'Q ':'symbol':'1.2-2':'es-GT' }}
+            </span>
+            <nz-tag [nzColor]="sale.status === 'COMPLETED' ? 'success' : 'error'">
+              {{ sale.status === 'COMPLETED' ? 'Completada' : 'Anulada' }}
+            </nz-tag>
+          </div>
+        </nz-list-item>
+      }
+    </nz-list>
+  }
+</div>
+
+<nz-drawer
+  [nzVisible]="drawerVisible()"
+  nzPlacement="bottom"
+  nzHeight="75vh"
+  [nzTitle]="selectedSale()?.sale_number ?? 'Detalle'"
+  (nzOnClose)="closeDrawer()"
+>
+  <ng-container *nzDrawerContent>
+    @if (selectedSale(); as sale) {
+      @if (sale.client) {
+        <div class="detail-client">
+          {{ sale.client.full_name }}
+          @if (sale.client.nit) { · NIT: {{ sale.client.nit }} }
+        </div>
+        <nz-divider />
+      }
+
+      <nz-descriptions nzBordered [nzColumn]="1" nzSize="small">
+        @for (item of sale.items; track item.sale_item_id) {
+          <nz-descriptions-item [nzTitle]="item.product_name">
+            {{ item.quantity }} × {{ item.unit_price | currency:'Q ':'symbol':'1.2-2':'es-GT' }}
+            = {{ item.subtotal | currency:'Q ':'symbol':'1.2-2':'es-GT' }}
+          </nz-descriptions-item>
+        }
+      </nz-descriptions>
+
+      <div class="detail-total">
+        Total: <strong>{{ sale.total | currency:'Q ':'symbol':'1.2-2':'es-GT' }}</strong>
+      </div>
+    }
+  </ng-container>
+</nz-drawer>
