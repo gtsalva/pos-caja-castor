@@ -22,7 +22,7 @@ export interface Sale {
   status: 'COMPLETED' | 'VOIDED';
   total: number;
   created_at: string;
-  client: { client_id: string; full_name: string } | null;
+  client: { client_id: string; full_name: string; nit: string | null } | null;
   salesperson: { user_id: string; full_name: string };
   items: {
     sale_item_id: string;
