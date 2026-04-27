@@ -24,9 +24,9 @@ export class VoucherService {
     const pageW = doc.internal.pageSize.getWidth();
     const pageH = doc.internal.pageSize.getHeight();
     const margin = 14;
-    const rightCol = pageW - margin;
-    const colQty = 100;
-    const colPrice = 120;
+    const rightCol = pageW - margin;   // 134mm — TOTAL right edge
+    const colQtyR = 84;                // CANT. right edge
+    const colPriceR = 112;             // P. UNIT. right edge
     let y = 14;
 
     const formatQ = (n: number) =>
@@ -83,8 +83,8 @@ export class VoucherService {
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(9);
     doc.text('PRODUCTO', margin, y);
-    doc.text('CANT.', colQty, y);
-    doc.text('PRECIO', colPrice, y);
+    doc.text('CANT.', colQtyR, y, { align: 'right' });
+    doc.text('P. UNIT.', colPriceR, y, { align: 'right' });
     doc.text('TOTAL', rightCol, y, { align: 'right' });
     y += 4;
     doc.line(margin, y, rightCol, y);
@@ -94,11 +94,11 @@ export class VoucherService {
     doc.setFont('helvetica', 'normal');
     for (const item of data.items) {
       const lineTotal = item.unit_price * item.quantity;
-      const nameLines = doc.splitTextToSize(item.name, 70) as string[];
+      const nameLines = doc.splitTextToSize(item.name, 68) as string[];
       addPageIfNeeded(nameLines.length * 5 + 2);
       doc.text(nameLines, margin, y);
-      doc.text(String(item.quantity), colQty, y);
-      doc.text(formatQ(item.unit_price), colPrice, y);
+      doc.text(String(item.quantity), colQtyR, y, { align: 'right' });
+      doc.text(formatQ(item.unit_price), colPriceR, y, { align: 'right' });
       doc.text(formatQ(lineTotal), rightCol, y, { align: 'right' });
       y += nameLines.length * 5;
     }
