@@ -1,6 +1,9 @@
 <div class="shell-wrap">
   <header class="shell-header">
-    <span class="brand">El Castor</span>
+    <div class="brand">
+      <div class="brand-icon"><span>C</span></div>
+      <span class="brand-name">El Castor</span>
+    </div>
     <div class="header-user" nz-dropdown [nzDropdownMenu]="userMenu" nzPlacement="bottomRight">
       <span nz-icon nzType="user"></span>
       <span class="username">{{ currentUser()?.full_name }}</span>

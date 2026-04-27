@@ -4,6 +4,7 @@
   position: sticky;
   top: 0;
   z-index: 10;
+  border-bottom: 1px solid #E8D5C4;
 }
 
 .search-bar {
@@ -43,18 +44,19 @@
 
 .product-card {
   background: #fff;
-  border-radius: 10px;
+  border-radius: 12px;
   padding: 14px 16px;
-  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.06);
+  border: 1px solid #EDE0D7;
   min-height: 80px;
   display: flex;
   flex-direction: column;
   gap: 4px;
   cursor: pointer;
-  transition: box-shadow 0.15s;
+  transition: border-color 0.15s, box-shadow 0.15s;
 
   &:active {
-    box-shadow: 0 2px 12px rgba(200, 90, 26, 0.2);
+    border-color: #C85A1A;
+    box-shadow: 0 2px 12px rgba(200, 90, 26, 0.12);
   }
 
   &--out {
@@ -128,13 +130,15 @@
 }
 
 .detail-price {
-  font-size: 20px;
-  font-weight: 700;
+
+  font-size: 22px;
+  font-weight: 600;
   color: #c85a1a;
 }
 
 .product-price {
-  font-size: 16px;
-  font-weight: 700;
+
+  font-size: 17px;
+  font-weight: 600;
   color: #c85a1a;
 }

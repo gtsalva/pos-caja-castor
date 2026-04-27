@@ -17,6 +17,9 @@ export interface CreateClientPayload {
   phone?: string;
   nit?: string;
   email?: string;
+  billing_address: string;
+  billing_city: string;
+  billing_department: string;
 }
 
 export interface ClientsResult {

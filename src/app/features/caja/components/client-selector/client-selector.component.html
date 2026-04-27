@@ -21,6 +21,17 @@
     }
   </ng-template>
 
+  @if (selectedClient(); as c) {
+    <div class="client-info">
+      @if (c.billing_address) {
+        <div class="client-info-address">{{ c.billing_address }}@if (c.billing_city) {, {{ c.billing_city }}}</div>
+      }
+      @if (c.phone) {
+        <div class="client-info-phone">{{ c.phone }}</div>
+      }
+    </div>
+  }
+
   @if (showDropdown() && (results().length > 0 || searchText().length >= 2)) {
     <div class="client-dropdown" (mousedown)="$event.preventDefault()">
       @for (c of results(); track c.client_id) {
@@ -57,6 +68,24 @@
       </nz-form-control>
     </nz-form-item>
     <nz-form-item>
+      <nz-form-label [nzRequired]="true">Dirección</nz-form-label>
+      <nz-form-control>
+        <input nz-input [(ngModel)]="newClient.billing_address" placeholder="6a Av. 5-10 Zona 1" />
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-label [nzRequired]="true">Ciudad</nz-form-label>
+      <nz-form-control>
+        <input nz-input [(ngModel)]="newClient.billing_city" placeholder="Guatemala" />
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-label [nzRequired]="true">Departamento</nz-form-label>
+      <nz-form-control>
+        <input nz-input [(ngModel)]="newClient.billing_department" placeholder="Guatemala" />
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
       <nz-form-label>Teléfono</nz-form-label>
       <nz-form-control>
         <input nz-input [(ngModel)]="newClient.phone" placeholder="+502 5555-0000" inputmode="tel" />
@@ -65,7 +94,7 @@
     <nz-form-item>
       <nz-form-label>NIT</nz-form-label>
       <nz-form-control>
-        <input nz-input [(ngModel)]="newClient.nit" placeholder="1234567-8" />
+        <input nz-input [(ngModel)]="newClient.nit" placeholder="CF" />
       </nz-form-control>
     </nz-form-item>
     <nz-form-item>

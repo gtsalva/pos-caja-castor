@@ -3,12 +3,13 @@
   bottom: 0;
   left: 0;
   right: 0;
-  height: 60px;
-  background: #3d3432;
+  height: 64px;
+  background: #FFFFFF;
   display: flex;
   align-items: stretch;
   z-index: 100;
-  border-top: 2px solid #c85a1a;
+  border-top: 1px solid #E8D5C4;
+  box-shadow: 0 -2px 12px rgba(58, 40, 32, 0.07);
 }
 
 .nav-item {
@@ -17,19 +18,37 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 2px;
-  color: rgba(245, 230, 211, 0.6);
+  gap: 3px;
+  color: #B8A89E;
   text-decoration: none;
   font-size: 10px;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 500;
   transition: color 0.15s;
+  position: relative;
 
   [nz-icon] {
-    font-size: 20px;
+    font-size: 21px;
   }
 
-  &.active,
+  &.active {
+    color: #C85A1A;
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 32px;
+      height: 2px;
+      background: #C85A1A;
+      border-radius: 0 0 3px 3px;
+    }
+  }
+
   &:active {
-    color: #c85a1a;
+    color: #C85A1A;
   }
 }
 

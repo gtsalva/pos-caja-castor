@@ -48,7 +48,15 @@ export class ClientSelectorComponent implements OnDestroy {
 
   readonly showNewModal = signal(false);
   readonly saving = signal(false);
-  readonly newClient: CreateClientPayload = { full_name: '', phone: '', nit: '', email: '' };
+  readonly newClient: CreateClientPayload = {
+    full_name: '',
+    phone: '',
+    nit: 'CF',
+    email: '',
+    billing_address: '',
+    billing_city: '',
+    billing_department: '',
+  };
 
   constructor() {
     this.search$.pipe(
@@ -95,14 +103,18 @@ export class ClientSelectorComponent implements OnDestroy {
   openNewModal(): void {
     this.newClient.full_name = this.searchText();
     this.newClient.phone = '';
-    this.newClient.nit = '';
+    this.newClient.nit = 'CF';
     this.newClient.email = '';
+    this.newClient.billing_address = '';
+    this.newClient.billing_city = '';
+    this.newClient.billing_department = '';
     this.showDropdown.set(false);
     this.showNewModal.set(true);
   }
 
   saveNewClient(): void {
     if (!this.newClient.full_name.trim()) return;
+    if (!this.newClient.billing_address.trim() || !this.newClient.billing_city.trim() || !this.newClient.billing_department.trim()) return;
     this.saving.set(true);
     this.api.createClient(this.newClient).subscribe({
       next: client => {
