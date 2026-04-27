@@ -73,9 +73,11 @@ export class CartService {
     payment_reference?: string,
     payment_document_url?: string,
   ): CreateSalePayload {
+    const client = this._client();
+    if (!client) throw new Error('buildPayload() called with no client set');
     return {
       payment_method,
-      client_id: this._client()!.client_id,
+      client_id: client.client_id,
       ...(payment_reference ? { payment_reference } : {}),
       ...(payment_document_url ? { payment_document_url } : {}),
       items: this._items().map(i => ({
