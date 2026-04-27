@@ -22,11 +22,22 @@ export class VoucherService {
   generate(data: VoucherData): Blob {
     const doc = new jsPDF({ unit: 'mm', format: 'a5', orientation: 'portrait' });
     const pageW = doc.internal.pageSize.getWidth();
+    const pageH = doc.internal.pageSize.getHeight();
     const margin = 14;
+    const rightCol = pageW - margin;
+    const colQty = 100;
+    const colPrice = 120;
     let y = 14;
 
     const formatQ = (n: number) =>
       `Q ${n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+
+    const addPageIfNeeded = (needed: number): void => {
+      if (y + needed > pageH - margin) {
+        doc.addPage();
+        y = margin;
+      }
+    };
 
     // Header
     doc.setFontSize(14);
@@ -42,7 +53,7 @@ export class VoucherService {
 
     // Divider
     doc.setDrawColor(200);
-    doc.line(margin, y, pageW - margin, y);
+    doc.line(margin, y, rightCol, y);
     y += 6;
 
     // Client
@@ -58,24 +69,25 @@ export class VoucherService {
       y += 5;
     }
     if (data.client.billing_address) {
-      doc.text(data.client.billing_address, margin, y);
-      y += 5;
+      const addrLines = doc.splitTextToSize(data.client.billing_address, pageW - 2 * margin) as string[];
+      doc.text(addrLines, margin, y);
+      y += addrLines.length * 5;
     }
     y += 3;
 
     // Divider
-    doc.line(margin, y, pageW - margin, y);
+    doc.line(margin, y, rightCol, y);
     y += 6;
 
     // Items header
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(9);
     doc.text('PRODUCTO', margin, y);
-    doc.text('CANT.', 100, y);
-    doc.text('PRECIO', 120, y);
-    doc.text('TOTAL', 148, y, { align: 'right' });
+    doc.text('CANT.', colQty, y);
+    doc.text('PRECIO', colPrice, y);
+    doc.text('TOTAL', rightCol, y, { align: 'right' });
     y += 4;
-    doc.line(margin, y, pageW - margin, y);
+    doc.line(margin, y, rightCol, y);
     y += 5;
 
     // Items rows
@@ -83,22 +95,24 @@ export class VoucherService {
     for (const item of data.items) {
       const lineTotal = item.unit_price * item.quantity;
       const nameLines = doc.splitTextToSize(item.name, 70) as string[];
+      addPageIfNeeded(nameLines.length * 5 + 2);
       doc.text(nameLines, margin, y);
-      doc.text(String(item.quantity), 100, y);
-      doc.text(formatQ(item.unit_price), 120, y);
-      doc.text(formatQ(lineTotal), 148, y, { align: 'right' });
+      doc.text(String(item.quantity), colQty, y);
+      doc.text(formatQ(item.unit_price), colPrice, y);
+      doc.text(formatQ(lineTotal), rightCol, y, { align: 'right' });
       y += nameLines.length * 5;
     }
 
     y += 3;
-    doc.line(margin, y, pageW - margin, y);
+    addPageIfNeeded(30);
+    doc.line(margin, y, rightCol, y);
     y += 6;
 
     // Total
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(11);
     doc.text('TOTAL', margin, y);
-    doc.text(formatQ(data.total), 148, y, { align: 'right' });
+    doc.text(formatQ(data.total), rightCol, y, { align: 'right' });
     y += 8;
 
     // Payment info
