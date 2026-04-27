@@ -21,6 +21,8 @@ export class CartService {
 
   readonly isEmpty = computed(() => this._items().length === 0);
 
+  readonly canConfirm = computed(() => !this.isEmpty() && this._client() !== null);
+
   addProduct(product: Product): void {
     if (product.stock <= 0) return;
     this._items.update(items => {
@@ -66,11 +68,16 @@ export class CartService {
     this._client.set(null);
   }
 
-  buildPayload(payment_method: PaymentMethod): CreateSalePayload {
-    const client = this._client();
+  buildPayload(
+    payment_method: PaymentMethod,
+    payment_reference?: string,
+    payment_document_url?: string,
+  ): CreateSalePayload {
     return {
       payment_method,
-      ...(client ? { client_id: client.client_id } : {}),
+      client_id: this._client()!.client_id,
+      ...(payment_reference ? { payment_reference } : {}),
+      ...(payment_document_url ? { payment_document_url } : {}),
       items: this._items().map(i => ({
         product_id: i.product_id,
         quantity: i.quantity,
