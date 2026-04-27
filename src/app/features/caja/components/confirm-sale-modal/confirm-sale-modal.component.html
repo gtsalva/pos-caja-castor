@@ -1,7 +1,7 @@
 <nz-modal
   [nzVisible]="visible()"
   [nzTitle]="modalTitle()"
-  nzFooter="null"
+  [nzFooter]="null"
   (nzOnCancel)="cancel()"
   nzWidth="92vw"
 >
@@ -65,7 +65,7 @@
             (ngModelChange)="authNumber.set($event)"
             placeholder="Ingresa el número de autorización"
             nzSize="large"
-            inputmode="text"
+            inputmode="numeric"
           />
         </div>
       }

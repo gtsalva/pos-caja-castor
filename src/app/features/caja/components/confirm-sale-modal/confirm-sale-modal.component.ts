@@ -1,11 +1,12 @@
 import { Component, inject, input, output, signal, computed } from '@angular/core';
 import { CurrencyPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { DestroyRef } from '@angular/core';
 import { NzModalModule } from 'ng-zorro-antd/modal';
 import { NzRadioModule } from 'ng-zorro-antd/radio';
 import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
 import { NzIconModule } from 'ng-zorro-antd/icon';
-import { NzTagModule } from 'ng-zorro-antd/tag';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
@@ -28,7 +29,6 @@ type Step = 'payment' | 'voucher';
     NzRadioModule,
     NzDescriptionsModule,
     NzIconModule,
-    NzTagModule,
     NzButtonModule,
     NzInputModule,
     NzDividerModule,
@@ -45,6 +45,7 @@ export class ConfirmSaleModalComponent {
   private readonly api = inject(CajaApiService);
   private readonly voucher = inject(VoucherService);
   private readonly message = inject(NzMessageService);
+  private readonly destroyRef = inject(DestroyRef);
 
   readonly step = signal<Step>('payment');
   readonly paymentMethod = signal<PaymentMethod>('CASH');
@@ -76,6 +77,7 @@ export class ConfirmSaleModalComponent {
   }
 
   confirm(): void {
+    if (this.processing()) return;
     const client = this.cart.client();
     if (!client) return;
 
@@ -98,6 +100,7 @@ export class ConfirmSaleModalComponent {
         );
         return this.api.createSale(payload);
       }),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: sale => {
         this.processing.set(false);
