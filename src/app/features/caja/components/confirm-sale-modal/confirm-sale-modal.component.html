@@ -1,51 +1,155 @@
 <nz-modal
   [nzVisible]="visible()"
-  nzTitle="Confirmar venta"
-  [nzOkLoading]="processing()"
-  nzOkText="Registrar venta"
-  nzCancelText="Cancelar"
-  (nzOnOk)="confirm()"
+  [nzTitle]="modalTitle()"
+  nzFooter="null"
   (nzOnCancel)="cancel()"
+  nzWidth="92vw"
 >
   <ng-container *nzModalContent>
 
-    @if (cart.client()) {
-      <div class="sale-client">
-        <span nz-icon nzType="user" nzTheme="outline"></span>
-        <span>{{ cart.client()!.full_name }}</span>
-        @if (cart.client()!.nit) {
-          <nz-tag>NIT: {{ cart.client()!.nit }}</nz-tag>
-        }
-      </div>
-    }
+    @if (step() === 'payment') {
 
-    <nz-descriptions nzBordered [nzColumn]="1" nzSize="small" class="sale-items">
-      @for (item of cart.items(); track item.product_id) {
-        <nz-descriptions-item [nzTitle]="item.name">
-          {{ item.quantity }} × {{ item.unit_price | currency:'Q ':'symbol':'1.2-2':'es-GT' }}
-          = {{ item.unit_price * item.quantity | currency:'Q ':'symbol':'1.2-2':'es-GT' }}
-        </nz-descriptions-item>
+      @if (cart.client()) {
+        <div class="sale-client">
+          <span nz-icon nzType="user" nzTheme="outline" class="sale-client-icon"></span>
+          <div class="sale-client-info">
+            <div class="sale-client-name">{{ cart.client()!.full_name }}</div>
+            @if (cart.client()!.nit) {
+              <div class="sale-client-nit">NIT: {{ cart.client()!.nit }}</div>
+            }
+          </div>
+        </div>
       }
-    </nz-descriptions>
 
-    <div class="sale-total">
-      Total: <strong>{{ cart.total() | currency:'Q ':'symbol':'1.2-2':'es-GT' }}</strong>
-    </div>
+      <nz-descriptions nzBordered [nzColumn]="1" nzSize="small" class="sale-items">
+        @for (item of cart.items(); track item.product_id) {
+          <nz-descriptions-item [nzTitle]="item.name">
+            {{ item.quantity }} × {{ item.unit_price | currency:'Q ':'symbol':'1.2-2':'en-US' }}
+            = {{ item.unit_price * item.quantity | currency:'Q ':'symbol':'1.2-2':'en-US' }}
+          </nz-descriptions-item>
+        }
+      </nz-descriptions>
 
-    <div class="sale-payment">
-      <div class="sale-payment-label">Método de pago</div>
-      <nz-radio-group [ngModel]="paymentMethod()" (ngModelChange)="paymentMethod.set($event)" nzButtonStyle="solid" class="payment-group">
-        <label nz-radio-button nzValue="CASH">
-          <span nz-icon nzType="dollar"></span> Efectivo
-        </label>
-        <label nz-radio-button nzValue="CARD">
-          <span nz-icon nzType="credit-card"></span> Tarjeta
-        </label>
-        <label nz-radio-button nzValue="TRANSFER">
-          <span nz-icon nzType="swap"></span> Transferencia
-        </label>
-      </nz-radio-group>
-    </div>
+      <div class="sale-total">
+        Total: <strong>{{ cart.total() | currency:'Q ':'symbol':'1.2-2':'en-US' }}</strong>
+      </div>
+
+      <nz-divider />
+
+      <div class="sale-payment">
+        <div class="sale-payment-label">Método de pago</div>
+        <nz-radio-group
+          [ngModel]="paymentMethod()"
+          (ngModelChange)="paymentMethod.set($event); authNumber.set('')"
+          nzButtonStyle="solid"
+          class="payment-group"
+        >
+          <label nz-radio-button nzValue="CASH">
+            <span nz-icon nzType="dollar"></span> Efectivo
+          </label>
+          <label nz-radio-button nzValue="CARD">
+            <span nz-icon nzType="credit-card"></span> Tarjeta
+          </label>
+          <label nz-radio-button nzValue="TRANSFER">
+            <span nz-icon nzType="swap"></span> Transferencia
+          </label>
+        </nz-radio-group>
+      </div>
+
+      @if (requiresAuth()) {
+        <div class="auth-number">
+          <label class="auth-number-label">No. de autorización</label>
+          <input
+            nz-input
+            [ngModel]="authNumber()"
+            (ngModelChange)="authNumber.set($event)"
+            placeholder="Ingresa el número de autorización"
+            nzSize="large"
+            inputmode="text"
+          />
+        </div>
+      }
+
+      <div class="modal-footer">
+        <button nz-button nzType="default" (click)="cancel()">Cancelar</button>
+        <button
+          nz-button
+          nzType="primary"
+          nzSize="large"
+          [disabled]="!canProceedToVoucher()"
+          (click)="goToVoucher()"
+        >
+          Ver comprobante <span nz-icon nzType="right"></span>
+        </button>
+      </div>
+
+    } @else {
+
+      <div class="voucher-preview">
+        <div class="voucher-header">
+          <div class="voucher-company">Mueblería El Castor</div>
+          <div class="voucher-subtitle">Comprobante de Venta</div>
+        </div>
+
+        <nz-divider />
+
+        <div class="voucher-client">
+          <div class="voucher-section-label">CLIENTE</div>
+          <div class="voucher-client-name">{{ cart.client()?.full_name }}</div>
+          @if (cart.client()?.nit) {
+            <div class="voucher-client-meta">NIT: {{ cart.client()!.nit }}</div>
+          }
+          @if (cart.client()?.billing_address) {
+            <div class="voucher-client-meta">{{ cart.client()!.billing_address }}</div>
+          }
+        </div>
+
+        <nz-divider />
+
+        <div class="voucher-section-label">ARTÍCULOS</div>
+        @for (item of cart.items(); track item.product_id) {
+          <div class="voucher-item">
+            <div class="voucher-item-name">{{ item.name }}</div>
+            <div class="voucher-item-detail">
+              {{ item.quantity }} × {{ item.unit_price | currency:'Q ':'symbol':'1.2-2':'en-US' }}
+              <span class="voucher-item-subtotal">
+                = {{ item.unit_price * item.quantity | currency:'Q ':'symbol':'1.2-2':'en-US' }}
+              </span>
+            </div>
+          </div>
+        }
+
+        <nz-divider />
+
+        <div class="voucher-total">
+          <span>TOTAL</span>
+          <strong>{{ cart.total() | currency:'Q ':'symbol':'1.2-2':'en-US' }}</strong>
+        </div>
+
+        <div class="voucher-payment">
+          <span>Método de pago: {{ paymentLabels[paymentMethod()] }}</span>
+          @if (requiresAuth() && authNumber()) {
+            <div>No. autorización: <strong>{{ authNumber() }}</strong></div>
+          }
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button nz-button nzType="default" (click)="goBack()">
+          <span nz-icon nzType="left"></span> Volver
+        </button>
+        <button
+          nz-button
+          nzType="primary"
+          nzSize="large"
+          [nzLoading]="processing()"
+          (click)="confirm()"
+        >
+          Confirmar y registrar
+        </button>
+      </div>
+
+    }
 
   </ng-container>
 </nz-modal>

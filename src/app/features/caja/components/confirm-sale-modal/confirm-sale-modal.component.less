@@ -1,41 +1,164 @@
 .sale-client {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 8px 0 12px;
-  font-size: 15px;
-  font-weight: 500;
+  gap: 10px;
+  background: #f5e6d3;
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin-bottom: 12px;
+
+  &-icon {
+    font-size: 20px;
+    color: #c85a1a;
+    flex-shrink: 0;
+  }
+
+  &-name {
+    font-weight: 600;
+    color: #3d3432;
+  }
+
+  &-nit {
+    font-size: 12px;
+    color: #8c7b75;
+  }
 }
 
 .sale-items {
-  margin-bottom: 16px;
+  margin-bottom: 12px;
 }
 
 .sale-total {
   text-align: right;
   font-size: 16px;
-  padding: 8px 0 16px;
-
-  strong {
-    font-size: 20px;
-    color: #C85A1A;
-  }
+  margin-bottom: 4px;
 }
 
 .sale-payment {
-  .sale-payment-label {
+  margin-top: 4px;
+
+  &-label {
     font-size: 13px;
-    color: #8c8c8c;
+    color: #8c7b75;
     margin-bottom: 8px;
   }
+}
 
-  .payment-group {
-    display: flex;
-    width: 100%;
+.payment-group {
+  display: flex;
+  width: 100%;
 
-    label {
-      flex: 1;
-      text-align: center;
-    }
+  label {
+    flex: 1;
+    text-align: center;
   }
+}
+
+.auth-number {
+  margin-top: 16px;
+
+  &-label {
+    display: block;
+    font-size: 13px;
+    color: #3d3432;
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 20px;
+  padding-top: 12px;
+  border-top: 1px solid #f0f0f0;
+  gap: 12px;
+
+  button:last-child {
+    flex: 1;
+  }
+}
+
+// Voucher preview
+.voucher-preview {
+  background: #fff;
+  border: 1px solid #e8e8e8;
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.voucher-header {
+  text-align: center;
+  margin-bottom: 4px;
+}
+
+.voucher-company {
+  font-size: 16px;
+  font-weight: 700;
+  color: #3d3432;
+}
+
+.voucher-subtitle {
+  font-size: 12px;
+  color: #8c7b75;
+  margin-top: 2px;
+}
+
+.voucher-section-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: #8c7b75;
+  letter-spacing: 0.05em;
+  margin-bottom: 4px;
+}
+
+.voucher-client {
+  margin-bottom: 4px;
+
+  &-name {
+    font-weight: 600;
+    color: #3d3432;
+  }
+
+  &-meta {
+    font-size: 12px;
+    color: #8c7b75;
+  }
+}
+
+.voucher-item {
+  margin-bottom: 8px;
+
+  &-name {
+    font-size: 13px;
+    color: #3d3432;
+  }
+
+  &-detail {
+    font-size: 12px;
+    color: #8c7b75;
+  }
+
+  &-subtotal {
+    color: #3d3432;
+    font-weight: 500;
+  }
+}
+
+.voucher-total {
+  display: flex;
+  justify-content: space-between;
+  font-size: 16px;
+  color: #3d3432;
+  margin-bottom: 8px;
+
+  strong {
+    color: #c85a1a;
+  }
+}
+
+.voucher-payment {
+  font-size: 12px;
+  color: #8c7b75;
 }
