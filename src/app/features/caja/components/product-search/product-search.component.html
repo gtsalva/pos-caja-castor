@@ -4,27 +4,106 @@
       type="search" (input)="onInput($event)" />
   </nz-input-group>
   <ng-template #searchIcon><span nz-icon nzType="search"></span></ng-template>
+
+  <div class="search-filter-row">
+    <nz-switch
+      [ngModel]="!hideOutOfStock()"
+      (ngModelChange)="hideOutOfStock.set(!$event)"
+      nzSize="small"
+    />
+    <span class="search-filter-label">
+      Mostrar agotados
+      @if (outOfStockCount() > 0) {
+        <span class="search-filter-count">({{ outOfStockCount() }})</span>
+      }
+    </span>
+  </div>
 </div>
 
 @if (isLoading()) {
   <div class="search-loading">
     <nz-spin nzSize="large" />
   </div>
-} @else if (products().length === 0) {
-  <nz-empty nzNotFoundContent="Sin resultados" class="search-empty" />
+} @else if (visibleProducts().length === 0) {
+  @if (outOfStockCount() > 0 && hideOutOfStock()) {
+    <nz-empty
+      nzNotFoundContent="Todos los productos están agotados"
+      class="search-empty"
+    />
+  } @else {
+    <nz-empty nzNotFoundContent="Sin resultados" class="search-empty" />
+  }
 } @else {
   <div class="product-grid">
-    @for (p of products(); track p.product_id) {
-      <div class="product-card" [class.product-card--out]="p.stock <= 0" (click)="selectProduct(p)">
-        <div class="product-name">{{ p.name }}</div>
-        <div class="product-sku">{{ p.sku }}</div>
+    @for (p of visibleProducts(); track p.product_id) {
+      <div class="product-card" [class.product-card--out]="p.stock <= 0" (click)="openDetail(p)">
+        <div class="product-card-main">
+          <div class="product-name">{{ p.name }}</div>
+          <div class="product-sku">{{ p.sku }}</div>
+        </div>
         <div class="product-footer">
-          <span class="product-price">{{ p.unit_price | currency:'Q ':'symbol':'1.2-2':'es-GT' }}</span>
-          <nz-tag [nzColor]="p.stock > 0 ? 'green' : 'red'">
-            {{ p.stock > 0 ? 'Stock: ' + p.stock : 'Agotado' }}
-          </nz-tag>
+          <span class="product-price">{{ p.unit_price | currency:'Q ':'symbol':'1.2-2':'en-US' }}</span>
+          <div class="product-footer-right">
+            <nz-tag [nzColor]="p.stock > 0 ? 'green' : 'red'">
+              {{ p.stock > 0 ? 'Stock: ' + p.stock : 'Agotado' }}
+            </nz-tag>
+            <button
+              nz-button
+              nzType="primary"
+              nzSize="small"
+              nzShape="circle"
+              class="card-add-btn"
+              [disabled]="p.stock <= 0"
+              (click)="onCardAddClick(p, $event)"
+            >
+              <span nz-icon nzType="shopping-cart" nzTheme="outline"></span>
+            </button>
+          </div>
         </div>
       </div>
     }
   </div>
 }
+
+<nz-modal
+  [nzVisible]="!!selectedForDetail()"
+  [nzTitle]="selectedForDetail()?.name ?? ''"
+  nzOkText="Agregar al carrito"
+  nzCancelText="Cerrar"
+  [nzOkDisabled]="!selectedForDetail() || selectedForDetail()!.stock <= 0"
+  (nzOnOk)="addDetailToCart()"
+  (nzOnCancel)="closeDetail()"
+>
+  <ng-container *nzModalContent>
+    @if (selectedForDetail(); as p) {
+      <div class="detail-body">
+        <div class="detail-row">
+          <span class="detail-label">SKU</span>
+          <span class="detail-value">{{ p.sku }}</span>
+        </div>
+        @if (p.category) {
+          <div class="detail-row">
+            <span class="detail-label">Categoría</span>
+            <span class="detail-value">{{ p.category.name }}</span>
+          </div>
+        }
+        <div class="detail-row">
+          <span class="detail-label">Precio</span>
+          <span class="detail-value detail-price">{{ p.unit_price | currency:'Q ':'symbol':'1.2-2':'en-US' }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Stock</span>
+          <nz-tag [nzColor]="p.stock > 0 ? 'green' : 'red'">
+            {{ p.stock > 0 ? p.stock + ' unidades' : 'Agotado' }}
+          </nz-tag>
+        </div>
+        @if (p.description) {
+          <div class="detail-row detail-row--desc">
+            <span class="detail-label">Descripción</span>
+            <span class="detail-value">{{ p.description }}</span>
+          </div>
+        }
+      </div>
+    }
+  </ng-container>
+</nz-modal>
