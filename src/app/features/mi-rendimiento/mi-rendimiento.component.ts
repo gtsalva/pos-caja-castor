@@ -2,14 +2,15 @@ import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { NzProgressModule } from 'ng-zorro-antd/progress';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { NzTagModule } from 'ng-zorro-antd/tag';
-import { DecimalPipe, DatePipe } from '@angular/common';
+import { DatePipe } from '@angular/common';
+import { QuetzalesPipe } from '../../shared/pipes/quetzales.pipe';
 import { MiRendimientoApiService } from './services/mi-rendimiento-api.service';
 import { MyPerformance } from './models/incentive.model';
 
 @Component({
   selector: 'app-mi-rendimiento',
   standalone: true,
-  imports: [NzProgressModule, NzSpinModule, NzTagModule, DecimalPipe, DatePipe],
+  imports: [NzProgressModule, NzSpinModule, NzTagModule, QuetzalesPipe, DatePipe],
   template: `
     <div class="rendimiento-shell">
       @if (loading()) {
@@ -38,20 +39,19 @@ import { MyPerformance } from './models/incentive.model';
               [nzPercent]="ringPct()"
               [nzWidth]="200"
               [nzStrokeColor]="ringColor()"
-              nzTrailColor="rgba(255,255,255,0.08)"
+              nzTrailColor="#E8D5C0"
               [nzFormat]="ringFormat"
               [nzStrokeWidth]="10"
             />
             <div class="ring-caption">
-              <span class="ring-label">de Q {{ d.period.goal_amount | number:'1.0-0' }} meta</span>
+              <span class="ring-label">de {{ d.period.goal_amount | quetzales }} meta</span>
             </div>
           </div>
 
           <div class="commission-card">
             <div class="commission-label">Comisión proyectada</div>
             <div class="commission-amount">
-              <span class="commission-currency">Q</span>
-              {{ d.commission_earned | number:'1.2-2' }}
+              {{ d.commission_earned | quetzales }}
             </div>
             @if (d.is_liquidated) {
               <nz-tag nzColor="#52c41a" style="margin-top:8px">Liquidado</nz-tag>
@@ -60,7 +60,7 @@ import { MyPerformance } from './models/incentive.model';
 
           <div class="stats-row">
             <div class="stat-chip">
-              <div class="stat-value">Q {{ d.amount_sold | number:'1.0-0' }}</div>
+              <div class="stat-value">{{ d.amount_sold | quetzales }}</div>
               <div class="stat-label">Vendido en período</div>
             </div>
             <div class="stat-divider"></div>
@@ -85,7 +85,7 @@ import { MyPerformance } from './models/incentive.model';
   styles: [`
     .rendimiento-shell {
       min-height: calc(100vh - 112px);
-      background: #3D3432;
+      background: #FAF5EE;
       padding: 0 0 32px;
       display: flex;
       flex-direction: column;
@@ -112,14 +112,14 @@ import { MyPerformance } from './models/incentive.model';
       font-size: 13px;
       letter-spacing: 2px;
       text-transform: uppercase;
-      color: rgba(245, 230, 211, 0.5);
+      color: rgba(61, 52, 50, 0.45);
       font-weight: 600;
     }
 
     .rend-period-label {
       font-size: 22px;
       font-weight: 700;
-      color: #F5E6D3;
+      color: #3D3432;
       line-height: 1.2;
     }
 
@@ -136,7 +136,7 @@ import { MyPerformance } from './models/incentive.model';
     }
 
     .ring-label {
-      color: rgba(245, 230, 211, 0.6);
+      color: rgba(61, 52, 50, 0.55);
       font-size: 13px;
     }
 
@@ -144,17 +144,18 @@ import { MyPerformance } from './models/incentive.model';
       margin-top: 36px;
       text-align: center;
       padding: 24px 32px;
-      background: rgba(245, 230, 211, 0.06);
-      border: 1px solid rgba(200, 90, 26, 0.3);
+      background: #FFFFFF;
+      border: 1px solid rgba(200, 90, 26, 0.18);
       border-radius: 16px;
       width: calc(100% - 40px);
+      box-shadow: 0 2px 12px rgba(200, 90, 26, 0.07);
     }
 
     .commission-label {
       font-size: 12px;
       letter-spacing: 1.5px;
       text-transform: uppercase;
-      color: rgba(245, 230, 211, 0.5);
+      color: rgba(61, 52, 50, 0.45);
       margin-bottom: 6px;
     }
 
@@ -169,7 +170,7 @@ import { MyPerformance } from './models/incentive.model';
       font-size: 24px;
       font-weight: 400;
       margin-right: 4px;
-      opacity: 0.8;
+      opacity: 0.7;
     }
 
     .stats-row {
@@ -177,8 +178,9 @@ import { MyPerformance } from './models/incentive.model';
       align-items: center;
       justify-content: space-evenly;
       width: calc(100% - 40px);
-      margin-top: 24px;
-      background: rgba(245, 230, 211, 0.04);
+      margin-top: 16px;
+      background: #FFFFFF;
+      border: 1px solid rgba(61, 52, 50, 0.08);
       border-radius: 12px;
       padding: 16px 8px;
     }
@@ -191,26 +193,26 @@ import { MyPerformance } from './models/incentive.model';
     .stat-value {
       font-size: 18px;
       font-weight: 700;
-      color: #F5E6D3;
+      color: #3D3432;
       line-height: 1.2;
     }
 
     .stat-label {
       font-size: 11px;
-      color: rgba(245, 230, 211, 0.45);
+      color: rgba(61, 52, 50, 0.5);
       margin-top: 2px;
     }
 
     .stat-divider {
       width: 1px;
       height: 36px;
-      background: rgba(245, 230, 211, 0.1);
+      background: rgba(61, 52, 50, 0.12);
     }
 
     .period-dates {
       margin-top: 20px;
       font-size: 12px;
-      color: rgba(245, 230, 211, 0.35);
+      color: rgba(61, 52, 50, 0.38);
       letter-spacing: 0.5px;
     }
 
@@ -229,7 +231,7 @@ import { MyPerformance } from './models/incentive.model';
     }
 
     .no-period p {
-      color: rgba(245, 230, 211, 0.5);
+      color: rgba(61, 52, 50, 0.5);
       font-size: 16px;
       margin: 0;
       text-align: center;
@@ -250,9 +252,9 @@ export class MiRendimientoComponent implements OnInit {
 
   readonly ringColor = computed(() => {
     const pct = this.ringPct();
-    if (pct >= 100) return '#52c41a';
+    if (pct >= 100) return '#5D9C59';
     if (pct >= 60) return '#C85A1A';
-    return '#faad14';
+    return '#E8943A';
   });
 
   readonly ringFormat = (pct: number): string => `${pct}%`;
