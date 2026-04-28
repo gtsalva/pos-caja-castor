@@ -47,6 +47,15 @@ export class MisVentasComponent implements OnInit {
   readonly drawerVisible = signal(false);
   readonly totalHoy = signal(0);
 
+  private static readonly fmt = new Intl.NumberFormat('en-US', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+
+  readonly totalHoyStr = computed(() =>
+    'Q ' + MisVentasComponent.fmt.format(this.totalHoy())
+  );
+
   readonly docViewerVisible = signal(false);
   readonly docViewerTitle = signal('');
   readonly docViewerLoading = signal(false);
