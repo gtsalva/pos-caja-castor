@@ -24,14 +24,14 @@
       <nz-descriptions nzBordered [nzColumn]="1" nzSize="small" class="sale-items">
         @for (item of cart.items(); track item.product_id) {
           <nz-descriptions-item [nzTitle]="item.name">
-            {{ item.quantity }} × {{ item.unit_price | currency:'Q ':'symbol':'1.2-2':'en-US' }}
-            = {{ item.unit_price * item.quantity | currency:'Q ':'symbol':'1.2-2':'en-US' }}
+            {{ item.quantity }} × {{ item.unit_price | quetzales }}
+            = {{ item.unit_price * item.quantity | quetzales }}
           </nz-descriptions-item>
         }
       </nz-descriptions>
 
       <div class="sale-total">
-        Total: <strong>{{ cart.total() | currency:'Q ':'symbol':'1.2-2':'en-US' }}</strong>
+        Total: <strong>{{ cart.total() | quetzales }}</strong>
       </div>
 
       <nz-divider />
@@ -137,9 +137,9 @@
           <div class="voucher-item">
             <div class="voucher-item-name">{{ item.name }}</div>
             <div class="voucher-item-detail">
-              {{ item.quantity }} × {{ item.unit_price | currency:'Q ':'symbol':'1.2-2':'en-US' }}
+              {{ item.quantity }} × {{ item.unit_price | quetzales }}
               <span class="voucher-item-subtotal">
-                = {{ item.unit_price * item.quantity | currency:'Q ':'symbol':'1.2-2':'en-US' }}
+                = {{ item.unit_price * item.quantity | quetzales }}
               </span>
             </div>
           </div>
@@ -149,7 +149,7 @@
 
         <div class="voucher-total">
           <span>TOTAL</span>
-          <strong>{{ cart.total() | currency:'Q ':'symbol':'1.2-2':'en-US' }}</strong>
+          <strong>{{ cart.total() | quetzales }}</strong>
         </div>
 
         <div class="voucher-payment">
@@ -202,7 +202,7 @@
           </div>
           <div class="success-row success-total-row">
             <span>Total</span>
-            <strong>{{ sale.total | currency:'Q ':'symbol':'1.2-2':'en-US' }}</strong>
+            <strong>{{ sale.total | quetzales }}</strong>
           </div>
         </div>
 

@@ -42,7 +42,7 @@
           <div class="product-sku">{{ p.sku }}</div>
         </div>
         <div class="product-footer">
-          <span class="product-price">{{ p.unit_price | currency:'Q ':'symbol':'1.2-2':'en-US' }}</span>
+          <span class="product-price">{{ p.unit_price | quetzales }}</span>
           <div class="product-footer-right">
             <nz-tag [nzColor]="p.stock > 0 ? 'green' : 'red'">
               {{ p.stock > 0 ? 'Stock: ' + p.stock : 'Agotado' }}
@@ -89,7 +89,7 @@
         }
         <div class="detail-row">
           <span class="detail-label">Precio</span>
-          <span class="detail-value detail-price">{{ p.unit_price | currency:'Q ':'symbol':'1.2-2':'en-US' }}</span>
+          <span class="detail-value detail-price">{{ p.unit_price | quetzales }}</span>
         </div>
         <div class="detail-row">
           <span class="detail-label">Stock</span>

@@ -1,5 +1,4 @@
 import { Component, computed, input, output, signal } from '@angular/core';
-import { CurrencyPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzIconModule } from 'ng-zorro-antd/icon';
@@ -9,6 +8,7 @@ import { NzEmptyModule } from 'ng-zorro-antd/empty';
 import { NzModalModule } from 'ng-zorro-antd/modal';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzSwitchModule } from 'ng-zorro-antd/switch';
+import { QuetzalesPipe } from '../../../../shared/pipes/quetzales.pipe';
 import { Product } from '../../../../shared/models/product.model';
 
 @Component({
@@ -16,7 +16,7 @@ import { Product } from '../../../../shared/models/product.model';
   standalone: true,
   imports: [
     FormsModule,
-    CurrencyPipe,
+    QuetzalesPipe,
     NzInputModule,
     NzIconModule,
     NzSpinModule,

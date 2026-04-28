@@ -23,7 +23,7 @@
               (ngModelChange)="onQuantityChange(item, $event ?? 1)"
             />
             <span class="cart-item-subtotal">
-              {{ item.unit_price * item.quantity | currency:'Q ':'symbol':'1.2-2':'en-US' }}
+              {{ item.unit_price * item.quantity | quetzales }}
             </span>
             <button nz-button nzType="text" nzDanger nzSize="small" (click)="removeItem(item)">
               <span nz-icon nzType="delete"></span>
@@ -38,7 +38,7 @@
     <div class="cart-total">
       <span class="cart-total-label">Total</span>
       <span class="cart-total-amount">
-        {{ cart.total() | currency:'Q ':'symbol':'1.2-2':'en-US' }}
+        {{ cart.total() | quetzales }}
       </span>
     </div>
 

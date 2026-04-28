@@ -1,5 +1,4 @@
 import { Component, inject, input, output, signal, computed } from '@angular/core';
-import { CurrencyPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DestroyRef } from '@angular/core';
@@ -13,6 +12,7 @@ import { NzDividerModule } from 'ng-zorro-antd/divider';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { forkJoin, Observable } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
+import { QuetzalesPipe } from '../../../../shared/pipes/quetzales.pipe';
 import { CartService } from '../../services/cart.service';
 import { CajaApiService } from '../../services/caja-api.service';
 import { VoucherService } from '../../services/voucher.service';
@@ -25,7 +25,7 @@ type Step = 'payment' | 'voucher' | 'success';
   standalone: true,
   imports: [
     FormsModule,
-    CurrencyPipe,
+    QuetzalesPipe,
     NzModalModule,
     NzRadioModule,
     NzDescriptionsModule,
