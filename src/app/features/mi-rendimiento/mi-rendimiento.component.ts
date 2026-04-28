@@ -2,14 +2,14 @@ import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { NzProgressModule } from 'ng-zorro-antd/progress';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { NzTagModule } from 'ng-zorro-antd/tag';
-import { DecimalPipe, DatePipe, NgIf } from '@angular/common';
+import { DecimalPipe, DatePipe } from '@angular/common';
 import { MiRendimientoApiService } from './services/mi-rendimiento-api.service';
 import { MyPerformance } from './models/incentive.model';
 
 @Component({
   selector: 'app-mi-rendimiento',
   standalone: true,
-  imports: [NzProgressModule, NzSpinModule, NzTagModule, DecimalPipe, DatePipe, NgIf],
+  imports: [NzProgressModule, NzSpinModule, NzTagModule, DecimalPipe, DatePipe],
   template: `
     <div class="rendimiento-shell">
       @if (loading()) {

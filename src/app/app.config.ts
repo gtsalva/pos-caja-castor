@@ -5,8 +5,8 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import { NZ_I18N, es_ES } from 'ng-zorro-antd/i18n';
 import { NzMessageModule } from 'ng-zorro-antd/message';
 import { provideNzIcons } from 'ng-zorro-antd/icon';
-import { registerLocaleData } from '@angular/common';
-import en from '@angular/common/locales/en';
+import { registerLocaleData, DATE_PIPE_DEFAULT_TIMEZONE } from '@angular/common';
+import es from '@angular/common/locales/es';
 import { routes } from './app.routes';
 import { authInterceptor } from './core/interceptors/auth.interceptor';
 import { errorInterceptor } from './core/interceptors/error.interceptor';
@@ -23,6 +23,7 @@ import {
   DollarOutline,
   DownOutline,
   ExclamationCircleFill,
+  FilePdfOutline,
   InfoCircleFill,
   LoadingOutline,
   LockOutline,
@@ -38,7 +39,7 @@ import {
   UserOutline,
 } from '@ant-design/icons-angular/icons';
 
-registerLocaleData(en);
+registerLocaleData(es);
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -56,6 +57,7 @@ export const appConfig: ApplicationConfig = {
       DeleteOutline,
       DollarOutline,
       DownOutline,
+      FilePdfOutline,
       LoadingOutline,
       LockOutline,
       LogoutOutline,
@@ -75,6 +77,7 @@ export const appConfig: ApplicationConfig = {
       InfoCircleFill,
     ]),
     { provide: NZ_I18N, useValue: es_ES },
-    { provide: LOCALE_ID, useValue: 'en-US' },
+    { provide: LOCALE_ID, useValue: 'es-GT' },
+    { provide: DATE_PIPE_DEFAULT_TIMEZONE, useValue: 'America/Guatemala' },
   ],
 };
