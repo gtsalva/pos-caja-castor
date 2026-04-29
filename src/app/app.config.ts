@@ -37,6 +37,7 @@ import {
   UnorderedListOutline,
   UpOutline,
   UserOutline,
+  FileImageOutline
 } from '@ant-design/icons-angular/icons';
 
 registerLocaleData(es);
@@ -75,6 +76,7 @@ export const appConfig: ApplicationConfig = {
       CloseCircleFill,
       ExclamationCircleFill,
       InfoCircleFill,
+      FileImageOutline
     ]),
     { provide: NZ_I18N, useValue: es_ES },
     { provide: LOCALE_ID, useValue: 'es-GT' },

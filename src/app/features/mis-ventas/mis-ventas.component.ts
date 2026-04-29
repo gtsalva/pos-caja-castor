@@ -1,5 +1,5 @@
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
-import { DatePipe } from '@angular/common';
+import { DatePipe, CurrencyPipe } from '@angular/common';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { NzListModule } from 'ng-zorro-antd/list';
 import { NzTagModule } from 'ng-zorro-antd/tag';
@@ -20,6 +20,7 @@ import { Sale } from '../../shared/models/sale.model';
   standalone: true,
   imports: [
     DatePipe,
+    CurrencyPipe,
     NzListModule,
     NzTagModule,
     NzEmptyModule,
