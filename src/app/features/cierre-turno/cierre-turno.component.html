@@ -1,0 +1,40 @@
+<div class="cierre-container">
+  <nz-spin [nzSpinning]="loading()">
+    @if (!loading() && shift() === null) {
+      <nz-card nzTitle="Cierre de Turno">
+        <p>Hola, <strong>{{ currentUser()?.full_name }}</strong>. Tu turno está <nz-tag nzColor="success">Abierto</nz-tag></p>
+        <nz-divider></nz-divider>
+        <p>Al cerrar tu turno no podrás registrar más ventas hoy.</p>
+        <button nz-button nzType="primary" nzDanger [nzLoading]="closing()" (click)="confirmClose()">
+          Cerrar Mi Turno
+        </button>
+      </nz-card>
+    }
+    @if (!loading() && shift() !== null) {
+      <nz-result nzStatus="warning" nzTitle="Turno Cerrado"
+        [nzSubTitle]="'Turno del ' + (shift()!.shift_date | date:'dd/MM/yyyy')">
+        <div nz-result-extra>
+          <div nz-row [nzGutter]="16">
+            <div nz-col [nzSpan]="12">
+              <nz-statistic nzTitle="Total Ventas" [nzValue]="shift()!.total_sales" nzPrefix="Q"></nz-statistic>
+            </div>
+            <div nz-col [nzSpan]="12">
+              <nz-statistic nzTitle="Transacciones" [nzValue]="shift()!.transaction_count"></nz-statistic>
+            </div>
+            <div nz-col [nzSpan]="8">
+              <nz-statistic nzTitle="Efectivo" [nzValue]="shift()!.cash_total" nzPrefix="Q"></nz-statistic>
+            </div>
+            <div nz-col [nzSpan]="8">
+              <nz-statistic nzTitle="Tarjeta" [nzValue]="shift()!.card_total" nzPrefix="Q"></nz-statistic>
+            </div>
+            <div nz-col [nzSpan]="8">
+              <nz-statistic nzTitle="Transferencia" [nzValue]="shift()!.transfer_total" nzPrefix="Q"></nz-statistic>
+            </div>
+          </div>
+          <nz-divider></nz-divider>
+          <p>Contacta a un gerente si necesitas continuar vendiendo hoy.</p>
+        </div>
+      </nz-result>
+    }
+  </nz-spin>
+</div>
