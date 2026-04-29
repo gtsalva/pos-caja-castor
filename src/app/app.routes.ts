@@ -34,7 +34,6 @@ export const routes: Routes = [
       },
       {
         path: 'cierre-turno',
-        canActivate: [authGuard, cajaRoleGuard],
         loadComponent: () =>
           import('./features/cierre-turno/cierre-turno.component').then(m => m.CierreTurnoComponent),
       },
