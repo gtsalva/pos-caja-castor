@@ -1,16 +1,17 @@
 <div class="cierre-container">
   <nz-spin [nzSpinning]="loading()">
-    @if (!loading() && shift() === null) {
+    @if (!loading() && (shift() === null || shift()!.status === 'REOPENED')) {
       <nz-card nzTitle="Cierre de Turno">
         <p>Hola, <strong>{{ currentUser()?.full_name }}</strong>. Tu turno está <nz-tag nzColor="success">Abierto</nz-tag></p>
         <nz-divider></nz-divider>
         <p>Al cerrar tu turno no podrás registrar más ventas hoy.</p>
-        <button nz-button nzType="primary" nzDanger [nzLoading]="closing()" (click)="confirmClose()">
+        <button nz-button nzType="primary" nzDanger nzSize="large" nzBlock
+          [nzLoading]="closing()" (click)="confirmClose()">
           Cerrar Mi Turno
         </button>
       </nz-card>
     }
-    @if (!loading() && shift() !== null) {
+    @if (!loading() && shift()?.status === 'CLOSED') {
       <nz-result nzStatus="warning" nzTitle="Turno Cerrado"
         [nzSubTitle]="'Turno del ' + (shift()!.shift_date | date:'dd/MM/yyyy')">
         <div nz-result-extra>

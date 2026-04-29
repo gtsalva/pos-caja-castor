@@ -46,7 +46,10 @@ export class CierreTurnoComponent implements OnInit {
         this.shift.set(s);
         this.loading.set(false);
       },
-      error: () => this.loading.set(false),
+      error: () => {
+        this.loading.set(false);
+        this.msg.error('No se pudo cargar el estado del turno. Intenta de nuevo.');
+      },
     });
   }
 

@@ -1,15 +1,10 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, of } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment';
 import { ShiftClose } from '../models/shift.model';
-
-interface ApiResponse<T> {
-  data: T;
-  message: string;
-  statusCode: number;
-}
+import { ApiResponse } from '../../../shared/models/auth.model';
 
 @Injectable({ providedIn: 'root' })
 export class ShiftApiService {
@@ -18,11 +13,8 @@ export class ShiftApiService {
 
   getMyShiftToday(): Observable<ShiftClose | null> {
     return this.http
-      .get<ApiResponse<ShiftClose>>(`${this.base}/my`)
-      .pipe(
-        map(res => res.data),
-        catchError(() => of(null)),
-      );
+      .get<ApiResponse<ShiftClose | null>>(`${this.base}/my`)
+      .pipe(map(res => res.data));
   }
 
   closeShift(notes?: string): Observable<ShiftClose> {
