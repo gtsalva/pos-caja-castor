@@ -4,6 +4,7 @@ import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { NZ_I18N, es_ES } from 'ng-zorro-antd/i18n';
 import { NzMessageModule } from 'ng-zorro-antd/message';
+import { NzModalModule } from 'ng-zorro-antd/modal';
 import { provideNzIcons } from 'ng-zorro-antd/icon';
 import { registerLocaleData, DATE_PIPE_DEFAULT_TIMEZONE } from '@angular/common';
 import es from '@angular/common/locales/es';
@@ -37,7 +38,8 @@ import {
   UnorderedListOutline,
   UpOutline,
   UserOutline,
-  FileImageOutline
+  FileImageOutline,
+  WarningFill
 } from '@ant-design/icons-angular/icons';
 
 registerLocaleData(es);
@@ -47,7 +49,7 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     provideHttpClient(withInterceptors([authInterceptor, errorInterceptor])),
     provideAnimationsAsync(),
-    importProvidersFrom(NzMessageModule),
+    importProvidersFrom(NzMessageModule, NzModalModule),
     provideNzIcons([
       // Outline
       BarChartOutline,
@@ -76,7 +78,8 @@ export const appConfig: ApplicationConfig = {
       CloseCircleFill,
       ExclamationCircleFill,
       InfoCircleFill,
-      FileImageOutline
+      FileImageOutline,
+      WarningFill
     ]),
     { provide: NZ_I18N, useValue: es_ES },
     { provide: LOCALE_ID, useValue: 'es-GT' },
