@@ -1,0 +1,161 @@
+<div class="page-header">
+  <button nz-button nzType="text" (click)="back()">
+    <span nz-icon nzType="arrow-left"></span>
+  </button>
+  <span class="page-order-num">{{ order()?.order_number ?? '…' }}</span>
+  @if (order()) {
+    <nz-tag [nzColor]="statusColors[order()!.status]">{{ statusLabels[order()!.status] }}</nz-tag>
+  }
+</div>
+
+@if (loading()) {
+  <div class="loading-wrap"><nz-spin nzTip="Cargando…" /></div>
+} @else {
+  @if (order(); as o) {
+
+    <div class="info-card">
+      <div class="info-row">
+        <span class="info-label">Cliente</span>
+        <span class="info-val">{{ clientLabel() }}</span>
+      </div>
+      @if (o.client_phone) {
+        <div class="info-row">
+          <span class="info-label">Teléfono</span>
+          <span class="info-val">{{ o.client_phone }}</span>
+        </div>
+      }
+      @if (o.delivery_date) {
+        <div class="info-row">
+          <span class="info-label">Fecha entrega</span>
+          <span class="info-val">{{ o.delivery_date }}</span>
+        </div>
+      }
+    </div>
+
+    <div class="pay-progress">
+      <div class="pay-progress-labels">
+        <span>Pagado: <strong>{{ o.total_paid | quetzales }}</strong></span>
+        <span class="bal">Saldo: <strong>{{ balance() | quetzales }}</strong></span>
+      </div>
+      <nz-progress [nzPercent]="paidPercent()"
+        [nzStatus]="paidPercent() >= 100 ? 'success' : 'active'"
+        [nzStrokeColor]="'#c85a1a'" />
+    </div>
+
+    <div class="actions-bar">
+      @if (canPay()) {
+        <button nz-button nzType="primary" nzSize="large" nzBlock
+          [nzLoading]="acting()" (click)="openPaymentModal()">
+          <span nz-icon nzType="dollar"></span>
+          Registrar pago
+        </button>
+      }
+      @if (canCancel()) {
+        <button nz-button nzType="default" nzDanger nzBlock
+          [nzLoading]="acting()" (click)="cancelModalVisible.set(true)">
+          <span nz-icon nzType="close-circle"></span>
+          Cancelar cotización
+        </button>
+      }
+    </div>
+
+    <div class="section">
+      <div class="section-title">Artículos · Total: {{ o.total | quetzales }}</div>
+      <nz-list [nzDataSource]="o.items" [nzRenderItem]="itemTpl" nzSize="small">
+        <ng-template #itemTpl let-item>
+          <nz-list-item class="item-row">
+            <div class="item-desc">
+              <div>{{ item.description }}</div>
+              @if (item.notes) { <div class="item-note">{{ item.notes }}</div> }
+            </div>
+            <div class="item-right">
+              <div class="item-qty">{{ item.quantity }} × {{ item.unit_price | quetzales }}</div>
+              <div class="item-sub">{{ item.subtotal | quetzales }}</div>
+            </div>
+          </nz-list-item>
+        </ng-template>
+      </nz-list>
+    </div>
+
+    @if (o.client_notes) {
+      <div class="section">
+        <div class="section-title">Notas para el cliente</div>
+        <p class="client-notes">{{ o.client_notes }}</p>
+      </div>
+    }
+
+    @if (o.payments.length > 0) {
+      <div class="section">
+        <div class="section-title">Pagos recibidos</div>
+        <nz-list [nzDataSource]="o.payments" [nzRenderItem]="payTpl" nzSize="small">
+          <ng-template #payTpl let-p>
+            <nz-list-item class="pay-row">
+              <div>
+                <div class="pay-method">{{ paymentLabels[p.payment_method] }}</div>
+                <div class="pay-date">{{ p.created_at | date:'dd/MM/yyyy HH:mm' }} · {{ p.received_by.full_name }}</div>
+                @if (p.payment_reference) { <div class="pay-ref">Ref: {{ p.payment_reference }}</div> }
+              </div>
+              <strong class="pay-amount">{{ p.amount | quetzales }}</strong>
+            </nz-list-item>
+          </ng-template>
+        </nz-list>
+      </div>
+    }
+  }
+}
+
+<nz-modal
+  [nzVisible]="paymentModalVisible()"
+  nzTitle="Registrar pago"
+  nzOkText="Registrar"
+  [nzOkDisabled]="paymentForm.invalid"
+  (nzOnOk)="confirmPayment()"
+  (nzOnCancel)="paymentModalVisible.set(false)"
+>
+  <ng-container *nzModalContent>
+    <form nz-form [formGroup]="paymentForm" nzLayout="vertical">
+      <nz-form-item>
+        <nz-form-label nzRequired>Método de pago</nz-form-label>
+        <nz-form-control>
+          <nz-select formControlName="payment_method" style="width:100%">
+            @for (m of paymentMethods; track m.value) {
+              <nz-option [nzValue]="m.value" [nzLabel]="m.label" />
+            }
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label nzRequired>Monto (Q)</nz-form-label>
+        <nz-form-control nzErrorTip="Mínimo Q 0.01">
+          <nz-input-number formControlName="amount" [nzMin]="0.01" [nzPrecision]="2"
+            nzPrefix="Q" style="width:100%" inputmode="decimal" />
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label>Referencia / No. autorización</nz-form-label>
+        <nz-form-control>
+          <input nz-input formControlName="payment_reference" placeholder="Opcional" />
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label>Notas</nz-form-label>
+        <nz-form-control>
+          <input nz-input formControlName="notes" placeholder="Opcional" />
+        </nz-form-control>
+      </nz-form-item>
+    </form>
+  </ng-container>
+</nz-modal>
+
+<nz-modal
+  [nzVisible]="cancelModalVisible()"
+  nzTitle="¿Cancelar cotización?"
+  nzOkText="Sí, cancelar"
+  nzOkDanger
+  (nzOnOk)="confirmCancel()"
+  (nzOnCancel)="cancelModalVisible.set(false)"
+>
+  <ng-container *nzModalContent>
+    <p>Esta acción no se puede deshacer. La cotización dejará de aparecer en tu lista.</p>
+  </ng-container>
+</nz-modal>

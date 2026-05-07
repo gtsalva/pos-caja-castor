@@ -1,13 +1,38 @@
 <div class="client-selector">
-  <nz-input-group [nzSuffix]="clientSuffix" [nzPrefix]="clientPrefix">
-    <input
-      nz-input
-      placeholder="Buscar cliente (nombre, NIT, teléfono)..."
-      [value]="searchText()"
-      (input)="onSearchInput($any($event.target).value)"
-      (blur)="showDropdown.set(false)"
-    />
-  </nz-input-group>
+
+  @if (selectedClient(); as c) {
+    <div class="client-card">
+      <div class="client-card-avatar">{{ c.full_name.charAt(0).toUpperCase() }}</div>
+      <div class="client-card-body">
+        <div class="client-card-name">{{ c.full_name }}</div>
+        <div class="client-card-meta">
+          @if (c.phone) {
+            <span class="client-card-phone">
+              <span nz-icon nzType="phone" nzTheme="outline"></span>
+              {{ formatPhone(c.phone) }}
+            </span>
+          }
+          @if (c.nit && c.nit !== 'CF') {
+            <span class="client-card-nit">NIT {{ c.nit }}</span>
+          }
+        </div>
+      </div>
+      <button class="client-card-change" (mousedown)="clearClient()">
+        <span nz-icon nzType="edit" nzTheme="outline"></span>
+        Cambiar
+      </button>
+    </div>
+  } @else {
+    <nz-input-group [nzSuffix]="clientSuffix" [nzPrefix]="clientPrefix">
+      <input
+        nz-input
+        placeholder="Buscar cliente por nombre, NIT o teléfono..."
+        [value]="searchText()"
+        (input)="onSearchInput($any($event.target).value)"
+        (blur)="showDropdown.set(false)"
+      />
+    </nz-input-group>
+  }
 
   <ng-template #clientPrefix>
     <span nz-icon nzType="user"></span>
@@ -16,36 +41,30 @@
   <ng-template #clientSuffix>
     @if (searching()) {
       <span nz-icon nzType="loading" nzTheme="outline"></span>
-    } @else if (selectedClient()) {
-      <span nz-icon nzType="check-circle" nzTheme="fill" class="icon-success" (mousedown)="clearClient()"></span>
     }
   </ng-template>
-
-  @if (selectedClient(); as c) {
-    <div class="client-info">
-      @if (c.billing_address) {
-        <div class="client-info-address">{{ c.billing_address }}@if (c.billing_city) {, {{ c.billing_city }}}</div>
-      }
-      @if (c.phone) {
-        <div class="client-info-phone">{{ c.phone }}</div>
-      }
-    </div>
-  }
 
   @if (showDropdown() && (results().length > 0 || searchText().length >= 2)) {
     <div class="client-dropdown" (mousedown)="$event.preventDefault()">
       @for (c of results(); track c.client_id) {
         <div class="client-option" (mousedown)="selectClient(c)">
-          <div class="client-option-name">{{ c.full_name }}</div>
-          <div class="client-option-sub">
-            @if (c.nit) { <span>NIT: {{ c.nit }}</span> }
-            @if (c.phone) { <span>· {{ c.phone }}</span> }
+          <div class="client-option-avatar">{{ c.full_name.charAt(0).toUpperCase() }}</div>
+          <div class="client-option-body">
+            <div class="client-option-name">{{ c.full_name }}</div>
+            <div class="client-option-sub">
+              @if (c.nit && c.nit !== 'CF') { <span>NIT {{ c.nit }}</span> }
+              @if (c.phone) { <span>{{ formatPhone(c.phone) }}</span> }
+            </div>
           </div>
+          <span nz-icon nzType="right" nzTheme="outline" class="client-option-arrow"></span>
         </div>
       }
       <div class="client-option client-option-new" (mousedown)="openNewModal()">
-        <span nz-icon nzType="plus-circle" nzTheme="outline"></span>
-        Crear "{{ searchText() }}" como nuevo cliente
+        <div class="client-option-new-icon"><span nz-icon nzType="plus"></span></div>
+        <div class="client-option-body">
+          <div class="client-option-name">Crear nuevo cliente</div>
+          <div class="client-option-sub">{{ searchText() }}</div>
+        </div>
       </div>
     </div>
   }
@@ -86,7 +105,7 @@
       </nz-form-control>
     </nz-form-item>
     <nz-form-item>
-      <nz-form-label>Teléfono</nz-form-label>
+      <nz-form-label>Teléfono <span class="optional-label">(Opcional)</span></nz-form-label>
       <nz-form-control>
         <input nz-input [(ngModel)]="newClient.phone" placeholder="+502 5555-0000" inputmode="tel" />
       </nz-form-control>
@@ -98,7 +117,7 @@
       </nz-form-control>
     </nz-form-item>
     <nz-form-item>
-      <nz-form-label>Correo</nz-form-label>
+      <nz-form-label>Correo <span class="optional-label">(Opcional)</span></nz-form-label>
       <nz-form-control>
         <input nz-input [(ngModel)]="newClient.email" placeholder="correo@ejemplo.com" inputmode="email" />
       </nz-form-control>

@@ -24,8 +24,8 @@
       <nz-descriptions nzBordered [nzColumn]="1" nzSize="small" class="sale-items">
         @for (item of cart.items(); track item.product_id) {
           <nz-descriptions-item [nzTitle]="item.name">
-            {{ item.quantity }} × {{ item.unit_price | quetzales }}
-            = {{ item.unit_price * item.quantity | quetzales }}
+            {{ item.quantity }} × {{ (item.custom_price ?? item.unit_price) | quetzales }}
+            = {{ (item.custom_price ?? item.unit_price) * item.quantity | quetzales }}
           </nz-descriptions-item>
         }
       </nz-descriptions>
@@ -37,38 +37,110 @@
       <nz-divider />
 
       <div class="sale-payment">
-        <div class="sale-payment-label">Método de pago</div>
-        <nz-radio-group
-          [ngModel]="paymentMethod()"
-          (ngModelChange)="paymentMethod.set($event); authNumber.set('')"
-          nzButtonStyle="solid"
-          class="payment-group"
-        >
-          <label nz-radio-button nzValue="CASH">
-            <span nz-icon nzType="dollar"></span> Efectivo
-          </label>
-          <label nz-radio-button nzValue="CARD">
-            <span nz-icon nzType="credit-card"></span> Tarjeta
-          </label>
-          <label nz-radio-button nzValue="TRANSFER">
-            <span nz-icon nzType="swap"></span> Transferencia
-          </label>
-        </nz-radio-group>
-      </div>
+        <div class="split-section-label">Forma de pago</div>
 
-      @if (requiresAuth()) {
-        <div class="auth-number">
-          <label class="auth-number-label">No. de autorización</label>
-          <input
-            nz-input
-            [ngModel]="authNumber()"
-            (ngModelChange)="authNumber.set($event)"
-            placeholder="Ingresa el número de autorización"
-            nzSize="large"
-            inputmode="text"
-          />
+        @for (split of paymentSplits(); track $index; let i = $index) {
+
+          @if (i === activeSlotIndex()) {
+            <!-- Slot activo: editor expandido -->
+            <div class="split-slot">
+              <nz-radio-group
+                [ngModel]="split.method"
+                (ngModelChange)="updateSplitMethod(i, $event)"
+                nzButtonStyle="solid"
+                class="split-method-group"
+              >
+                <label nz-radio-button nzValue="CASH">
+                  <span nz-icon nzType="dollar"></span> Efectivo
+                </label>
+                <label nz-radio-button nzValue="CARD">
+                  <span nz-icon nzType="credit-card"></span> Tarjeta
+                </label>
+                <label nz-radio-button nzValue="TRANSFER">
+                  <span nz-icon nzType="swap"></span> Depósito
+                </label>
+                <label nz-radio-button nzValue="VISACUOTAS">
+                  <span nz-icon nzType="percentage"></span> Cuotas
+                </label>
+              </nz-radio-group>
+
+              <nz-input-number
+                [ngModel]="split.amount"
+                (ngModelChange)="updateSplitAmount(i, $event)"
+                [nzMin]="0.01"
+                [nzPrecision]="2"
+                [nzStep]="10"
+                nzPlaceHolder="Monto Q"
+                nzSize="large"
+                class="split-amount-input"
+              />
+
+              @if (splitRequiresAuth(split)) {
+                <input
+                  nz-input
+                  [ngModel]="split.auth_number"
+                  (ngModelChange)="updateSplitAuth(i, $event)"
+                  placeholder="No. de autorización"
+                  nzSize="large"
+                  inputmode="text"
+                  class="split-auth-input"
+                />
+              }
+
+              <div class="split-slot-actions">
+                @if (paymentSplits().length > 1) {
+                  <button nz-button nzType="text" nzDanger nzSize="small" (click)="removeSplit(i)" class="split-slot-remove">
+                    <span nz-icon nzType="delete"></span> Eliminar
+                  </button>
+                } @else {
+                  <span></span>
+                }
+                @if (canAddSplit() && (split.amount || 0) > 0.005) {
+                  <button nz-button nzType="text" nzSize="small" (click)="addSplit()" class="split-slot-add">
+                    <span nz-icon nzType="plus-circle"></span> Agregar
+                  </button>
+                }
+              </div>
+            </div>
+
+          } @else {
+            <!-- Slot colapsado: píldora compacta -->
+            <div class="split-pill" (click)="setActiveSlot(i)">
+              <span nz-icon [nzType]="splitIcons[split.method]" class="split-pill-icon"></span>
+              <div class="split-pill-info">
+                <span class="split-pill-method">{{ paymentLabels[split.method] }}</span>
+                <span class="split-pill-amount">{{ split.amount | quetzales }}</span>
+              </div>
+              <span nz-icon nzType="edit" class="split-pill-edit"></span>
+              <button
+                nz-button nzType="text" nzDanger nzSize="small"
+                class="split-pill-remove"
+                (click)="removeSplit(i); $event.stopPropagation()"
+              >
+                <span nz-icon nzType="close"></span>
+              </button>
+            </div>
+          }
+
+        }
+
+        <div class="split-summary">
+          <div class="split-summary-amounts">
+            <span class="split-summary-label">Asignado</span>
+            <span class="split-summary-value">{{ allocatedAmount() | quetzales }}</span>
+          </div>
+          <div class="split-summary-badge">
+            @if (remainingAmount() > 0.005) {
+              <nz-tag nzColor="warning">Pendiente {{ remainingAmount() | quetzales }}</nz-tag>
+            } @else if (remainingAmount() < -0.005) {
+              <nz-tag nzColor="error">Excede {{ (remainingAmount() * -1) | quetzales }}</nz-tag>
+            } @else {
+              <nz-tag nzColor="success">Completo</nz-tag>
+            }
+          </div>
         </div>
-      }
+
+      </div>
 
       <div class="receipt-upload">
         <div class="receipt-upload-label">
@@ -137,9 +209,9 @@
           <div class="voucher-item">
             <div class="voucher-item-name">{{ item.name }}</div>
             <div class="voucher-item-detail">
-              {{ item.quantity }} × {{ item.unit_price | quetzales }}
+              {{ item.quantity }} × {{ (item.custom_price ?? item.unit_price) | quetzales }}
               <span class="voucher-item-subtotal">
-                = {{ item.unit_price * item.quantity | quetzales }}
+                = {{ (item.custom_price ?? item.unit_price) * item.quantity | quetzales }}
               </span>
             </div>
           </div>
@@ -153,13 +225,19 @@
         </div>
 
         <div class="voucher-payment">
-          <span>Método de pago: {{ paymentLabels[paymentMethod()] }}</span>
-          @if (requiresAuth() && authNumber()) {
-            <div>No. autorización: <strong>{{ authNumber() }}</strong></div>
+          <div class="voucher-section-label">FORMA DE PAGO</div>
+          @for (split of paymentSplits(); track $index) {
+            <div class="voucher-payment-row">
+              <span class="voucher-payment-method">{{ paymentLabels[split.method] }}</span>
+              <strong>{{ split.amount | quetzales }}</strong>
+            </div>
+            @if (split.auth_number) {
+              <div class="voucher-payment-ref">No. autorización: {{ split.auth_number }}</div>
+            }
           }
           @if (receiptFile()) {
             <div class="voucher-receipt-attached">
-              <span nz-icon nzType="paper-clip"></span> Comprobante adjunto: {{ receiptFile()!.name }}
+              <span nz-icon nzType="paper-clip"></span> {{ receiptFile()!.name }}
             </div>
           }
         </div>
@@ -196,10 +274,12 @@
             <span>Cliente</span>
             <strong>{{ sale.client?.full_name ?? '—' }}</strong>
           </div>
-          <div class="success-row">
-            <span>Método de pago</span>
-            <strong>{{ paymentLabels[sale.payment_method] }}</strong>
-          </div>
+          @for (payment of sale.payments; track payment.sale_payment_id) {
+            <div class="success-row">
+              <span>{{ paymentLabels[payment.payment_method] }}</span>
+              <strong>{{ payment.amount | quetzales }}</strong>
+            </div>
+          }
           <div class="success-row success-total-row">
             <span>Total</span>
             <strong>{{ sale.total | quetzales }}</strong>

@@ -299,3 +299,222 @@
 
   .anticon { font-size: 16px; color: #c85a1a; }
 }
+
+// ── Split payment section ─────────────────────────────────────────────────
+
+.split-section-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #3D3432;
+  opacity: 0.5;
+  margin-bottom: 8px;
+}
+
+// Slot activo (editor expandido)
+.split-slot {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  margin-bottom: 8px;
+  background: #fff;
+  border: 2px solid #C85A1A;
+  border-radius: 10px;
+}
+
+.split-method-group {
+  width: 100%;
+
+  :deep(.ant-radio-button-wrapper) {
+    padding: 0 10px;
+    font-size: 12px;
+    height: 36px;
+    line-height: 34px;
+  }
+}
+
+.split-amount-input {
+  width: 100%;
+}
+
+.split-auth-input {
+  width: 100%;
+}
+
+.split-slot-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 2px;
+}
+
+.split-slot-add {
+  color: #389e0d !important;
+  padding: 0 4px !important;
+  height: 24px !important;
+  font-size: 12px !important;
+
+  &:hover {
+    color: #52c41a !important;
+  }
+}
+
+.split-slot-remove {
+  padding: 0 4px !important;
+  height: 24px !important;
+  font-size: 12px !important;
+}
+
+// Slot colapsado (píldora)
+.split-pill {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 12px;
+  height: 52px;
+  margin-bottom: 8px;
+  background: #fdf8f4;
+  border: 1.5px solid #e8d5c4;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+
+  &:active {
+    background: #f5ece3;
+    border-color: #C85A1A;
+  }
+}
+
+.split-pill-icon {
+  font-size: 18px;
+  color: #C85A1A;
+  flex-shrink: 0;
+}
+
+.split-pill-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+
+.split-pill-method {
+  font-size: 12px;
+  color: #3D3432;
+  opacity: 0.6;
+  line-height: 1.2;
+}
+
+.split-pill-amount {
+  font-size: 16px;
+  font-weight: 700;
+  color: #3D3432;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+.split-pill-edit {
+  font-size: 14px;
+  color: #3D3432;
+  opacity: 0.3;
+  flex-shrink: 0;
+}
+
+.split-pill-remove {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border-radius: 50%;
+
+  &:deep(.anticon) {
+    font-size: 13px;
+  }
+}
+
+// ── Split summary ─────────────────────────────────────────────────────────
+
+.split-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  background: linear-gradient(135deg, #f5ece3 0%, #fdf8f4 100%);
+  border-radius: 8px;
+  margin: 4px 0 10px;
+  border: 1px solid #e8d5c4;
+}
+
+.split-summary-amounts {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.split-summary-label {
+  font-size: 11px;
+  color: #3D3432;
+  opacity: 0.55;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.split-summary-value {
+  font-size: 16px;
+  font-weight: 700;
+  color: #3D3432;
+  letter-spacing: -0.02em;
+}
+
+.split-summary-badge {
+  :deep(.ant-tag) {
+    font-size: 12px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 20px;
+    margin: 0;
+  }
+}
+
+.split-add-btn {
+  margin-bottom: 4px;
+  border-style: dashed;
+  color: #C85A1A;
+  border-color: #C85A1A;
+
+  &:hover {
+    background: rgba(200, 90, 26, 0.05);
+  }
+}
+
+// ── Voucher payment rows ──────────────────────────────────────────────────
+
+.voucher-payment {
+  margin-bottom: 6px;
+}
+
+.voucher-payment-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 3px 0;
+}
+
+.voucher-payment-method {
+  color: #3D3432;
+  opacity: 0.75;
+}
+
+.voucher-payment-ref {
+  font-size: 11px;
+  color: #999;
+  padding-left: 8px;
+  margin-bottom: 4px;
+}

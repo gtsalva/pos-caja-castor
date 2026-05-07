@@ -1,5 +1,5 @@
 import { Injectable, computed, signal } from '@angular/core';
-import { CartItem, PaymentMethod, CreateSalePayload } from '../../../shared/models/sale.model';
+import { CartItem, PaymentMethod, CreateSalePayload, SalePaymentItem } from '../../../shared/models/sale.model';
 import { Product } from '../../../shared/models/product.model';
 import { Client } from '../../../shared/models/client.model';
 
@@ -12,7 +12,7 @@ export class CartService {
   readonly client = this._client.asReadonly();
 
   readonly total = computed(() =>
-    this._items().reduce((sum, i) => sum + i.unit_price * i.quantity, 0)
+    this._items().reduce((sum, i) => sum + (i.custom_price ?? i.unit_price) * i.quantity, 0)
   );
 
   readonly itemCount = computed(() =>
@@ -21,9 +21,18 @@ export class CartService {
 
   readonly isEmpty = computed(() => this._items().length === 0);
 
-  readonly canConfirm = computed(() => !this.isEmpty() && this._client() !== null);
+  readonly hasInvalidPrices = computed(() =>
+    this._items().some(i => {
+      const effective = i.custom_price ?? i.unit_price;
+      return i.min_sale_price != null && effective < i.min_sale_price;
+    })
+  );
 
-  addProduct(product: Product): void {
+  readonly canConfirm = computed(() =>
+    !this.isEmpty() && this._client() !== null && !this.hasInvalidPrices()
+  );
+
+  addProduct(product: Product, custom_price?: number): void {
     if (product.stock <= 0) return;
     this._items.update(items => {
       const idx = items.findIndex(i => i.product_id === product.product_id);
@@ -34,15 +43,29 @@ export class CartService {
           return { ...item, quantity: newQty };
         });
       }
+      const listPrice = Number(product.unit_price);
+      const negotiated = custom_price != null ? custom_price : listPrice;
       return [...items, {
         product_id: product.product_id,
         sku: product.sku,
         name: product.name,
-        unit_price: Number(product.unit_price),
+        unit_price: listPrice,
+        min_sale_price: product.min_sale_price != null ? Number(product.min_sale_price) : null,
+        custom_price: negotiated !== listPrice ? negotiated : undefined,
         stock: product.stock,
         quantity: 1,
       }];
     });
+  }
+
+  setCustomPrice(product_id: string, price: number): void {
+    this._items.update(items =>
+      items.map(i => {
+        if (i.product_id !== product_id) return i;
+        const rounded = Math.round(price * 100) / 100;
+        return { ...i, custom_price: rounded !== i.unit_price ? rounded : undefined };
+      })
+    );
   }
 
   setQuantity(product_id: string, quantity: number): void {
@@ -69,22 +92,21 @@ export class CartService {
   }
 
   buildPayload(
-    payment_method: PaymentMethod,
-    payment_reference?: string,
+    payments: SalePaymentItem[],
     payment_document_url?: string,
     payment_receipt_url?: string,
   ): CreateSalePayload {
     const client = this._client();
     if (!client) throw new Error('buildPayload() called with no client set');
     return {
-      payment_method,
+      payments,
       client_id: client.client_id,
-      ...(payment_reference ? { payment_reference } : {}),
       ...(payment_document_url ? { payment_document_url } : {}),
       ...(payment_receipt_url ? { payment_receipt_url } : {}),
       items: this._items().map(i => ({
         product_id: i.product_id,
         quantity: i.quantity,
+        unit_price: i.custom_price ?? i.unit_price,
       })),
     };
   }

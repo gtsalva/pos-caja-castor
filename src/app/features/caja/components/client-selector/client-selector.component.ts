@@ -131,6 +131,14 @@ export class ClientSelectorComponent implements OnDestroy {
     });
   }
 
+  // Guatemala: 8 digits → XXXX-XXXX, with +502 prefix stripped for display
+  formatPhone(phone: string): string {
+    const digits = phone.replace(/\D/g, '');
+    const local = digits.startsWith('502') ? digits.slice(3) : digits;
+    if (local.length === 8) return `${local.slice(0, 4)}-${local.slice(4)}`;
+    return phone;
+  }
+
   ngOnDestroy(): void {
     this.search$.complete();
   }

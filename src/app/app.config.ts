@@ -39,7 +39,16 @@ import {
   UpOutline,
   UserOutline,
   FileImageOutline,
-  WarningFill
+  WarningFill,
+  PercentageOutline,
+  MinusOutline,
+  StopOutline,
+  StopFill,
+  FileTextOutline,
+  ArrowLeftOutline,
+  PhoneOutline,
+  ShopOutline,
+  ToolOutline,
 } from '@ant-design/icons-angular/icons';
 
 registerLocaleData(es);
@@ -79,7 +88,16 @@ export const appConfig: ApplicationConfig = {
       ExclamationCircleFill,
       InfoCircleFill,
       FileImageOutline,
-      WarningFill
+      WarningFill,
+      PercentageOutline,
+      MinusOutline,
+      StopOutline,
+      StopFill,
+      FileTextOutline,
+      ArrowLeftOutline,
+      PhoneOutline,
+      ShopOutline,
+      ToolOutline
     ]),
     { provide: NZ_I18N, useValue: es_ES },
     { provide: LOCALE_ID, useValue: 'es-GT' },

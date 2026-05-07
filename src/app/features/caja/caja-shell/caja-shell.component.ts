@@ -74,8 +74,8 @@ export class CajaShellComponent implements OnInit {
     this.query$.next(q);
   }
 
-  onProductSelected(product: Product): void {
-    this.cart.addProduct(product);
+  onProductSelected(event: { product: Product; custom_price: number }): void {
+    this.cart.addProduct(event.product, event.custom_price);
     if (!this.cartVisible()) this.cartVisible.set(true);
   }
 

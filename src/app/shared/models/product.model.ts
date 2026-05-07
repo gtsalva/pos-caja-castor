@@ -4,6 +4,7 @@ export interface Product {
   name: string;
   description: string | null;
   unit_price: number;
+  min_sale_price: number | null;
   stock: number;
   min_stock: number;
   is_active: boolean;

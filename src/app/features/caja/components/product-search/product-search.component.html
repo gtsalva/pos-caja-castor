@@ -70,7 +70,7 @@
   [nzTitle]="selectedForDetail()?.name ?? ''"
   nzOkText="Agregar al carrito"
   nzCancelText="Cerrar"
-  [nzOkDisabled]="!selectedForDetail() || selectedForDetail()!.stock <= 0"
+  [nzOkDisabled]="!selectedForDetail() || selectedForDetail()!.stock <= 0 || !priceIsValid()"
   (nzOnOk)="addDetailToCart()"
   (nzOnCancel)="closeDetail()"
 >
@@ -88,9 +88,55 @@
           </div>
         }
         <div class="detail-row">
-          <span class="detail-label">Precio</span>
-          <span class="detail-value detail-price">{{ p.unit_price | quetzales }}</span>
+          <span class="detail-label">Precio lista</span>
+          <span class="detail-value detail-price" [class.detail-price--dimmed]="priceIsNegotiated()">
+            {{ p.unit_price | quetzales }}
+          </span>
         </div>
+
+        <div class="detail-row detail-row--price-editor">
+          <span class="detail-label">Precio venta</span>
+          <div class="price-editor">
+            <button
+              nz-button nzType="text" nzSize="small"
+              class="price-editor-btn"
+              [disabled]="negotiatedPrice() <= (p.min_sale_price ?? 0) + 0.001"
+              (click)="adjustPrice(-10)"
+            >
+              <span nz-icon nzType="minus"></span>
+            </button>
+            <nz-input-number
+              [ngModel]="negotiatedPrice()"
+              (ngModelChange)="setNegotiatedPrice($event)"
+              [nzMin]="0.01"
+              [nzPrecision]="2"
+              [nzStep]="10"
+              nzSize="small"
+              class="price-editor-input"
+              [class.price-editor-input--negotiated]="priceIsNegotiated() && priceIsValid()"
+              [class.price-editor-input--invalid]="!priceIsValid()"
+            />
+            <button
+              nz-button nzType="text" nzSize="small"
+              class="price-editor-btn"
+              (click)="adjustPrice(10)"
+            >
+              <span nz-icon nzType="plus"></span>
+            </button>
+          </div>
+        </div>
+
+        @if (!priceIsValid()) {
+          <div class="detail-price-error">
+            <span nz-icon nzType="stop" nzTheme="fill" class="detail-price-error-icon"></span>
+            <span>Por debajo del mínimo permitido: <strong>{{ p.min_sale_price | quetzales }}</strong></span>
+          </div>
+        } @else if (p.min_sale_price != null) {
+          <div class="detail-min-price">
+            Precio mínimo: {{ p.min_sale_price | quetzales }}
+          </div>
+        }
+
         <div class="detail-row">
           <span class="detail-label">Stock</span>
           <nz-tag [nzColor]="p.stock > 0 ? 'green' : 'red'">

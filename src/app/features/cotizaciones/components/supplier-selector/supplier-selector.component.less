@@ -1,17 +1,14 @@
-.client-selector {
-  position: relative;
-}
+.supplier-selector { position: relative; }
 
-/* ── Tarjeta de cliente seleccionado ── */
-.client-card {
+.supplier-card {
   display: flex;
   align-items: center;
   gap: 12px;
   padding: 12px 14px;
-  background: linear-gradient(135deg, #fdf3ec 0%, #fff8f4 100%);
-  border: 1.5px solid #c85a1a;
+  background: linear-gradient(135deg, #f0f5ff 0%, #f8faff 100%);
+  border: 1.5px solid #4a7aba;
   border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(200, 90, 26, 0.10);
+  box-shadow: 0 2px 8px rgba(74, 122, 186, 0.10);
   animation: cardSlideIn 0.22s cubic-bezier(0.34, 1.56, 0.64, 1) both;
 
   &-avatar {
@@ -19,21 +16,16 @@
     width: 44px;
     height: 44px;
     border-radius: 50%;
-    background: #c85a1a;
+    background: #4a7aba;
     color: #fff;
     font-size: 18px;
-    font-weight: 700;
     display: flex;
     align-items: center;
     justify-content: center;
-    letter-spacing: -0.5px;
-    box-shadow: 0 2px 6px rgba(200, 90, 26, 0.30);
+    box-shadow: 0 2px 6px rgba(74, 122, 186, 0.30);
   }
 
-  &-body {
-    flex: 1;
-    min-width: 0;
-  }
+  &-body { flex: 1; min-width: 0; }
 
   &-name {
     font-size: 15px;
@@ -53,27 +45,14 @@
     flex-wrap: wrap;
   }
 
-  &-phone {
+  &-contact, &-phone {
     display: flex;
     align-items: center;
     gap: 4px;
     font-size: 13px;
     color: #5c4d47;
     font-weight: 500;
-
-    [nz-icon] {
-      font-size: 12px;
-      color: #c85a1a;
-    }
-  }
-
-  &-nit {
-    font-size: 11px;
-    color: #9c8b85;
-    background: rgba(200, 90, 26, 0.08);
-    padding: 1px 6px;
-    border-radius: 4px;
-    font-weight: 500;
+    [nz-icon] { font-size: 12px; color: #4a7aba; }
   }
 
   &-change {
@@ -83,20 +62,15 @@
     gap: 4px;
     padding: 6px 10px;
     background: transparent;
-    border: 1px solid rgba(200, 90, 26, 0.35);
+    border: 1px solid rgba(74, 122, 186, 0.35);
     border-radius: 8px;
-    color: #c85a1a;
+    color: #4a7aba;
     font-size: 12px;
     font-weight: 600;
     cursor: pointer;
-    transition: background 0.15s, border-color 0.15s;
     white-space: nowrap;
-
-    &:active {
-      background: rgba(200, 90, 26, 0.08);
-      border-color: #c85a1a;
-    }
-
+    transition: background 0.15s;
+    &:active { background: rgba(74, 122, 186, 0.08); }
     [nz-icon] { font-size: 12px; }
   }
 }
@@ -106,8 +80,7 @@
   to   { opacity: 1; transform: translateY(0)    scale(1);    }
 }
 
-/* ── Dropdown de resultados ── */
-.client-dropdown {
+.supplier-dropdown {
   position: absolute;
   top: calc(100% + 4px);
   left: 0;
@@ -119,10 +92,9 @@
   z-index: 1000;
   max-height: 260px;
   overflow-y: auto;
-  overflow-x: hidden;
 }
 
-.client-option {
+.supplier-option {
   display: flex;
   align-items: center;
   gap: 10px;
@@ -132,17 +104,16 @@
   transition: background 0.12s;
 
   &:last-child { border-bottom: none; }
-  &:active     { background: #fdf3ec; }
+  &:active     { background: #f0f5ff; }
 
-  &-avatar {
+  &-icon {
     flex-shrink: 0;
     width: 36px;
     height: 36px;
     border-radius: 50%;
-    background: #f5e6d3;
-    color: #c85a1a;
-    font-size: 14px;
-    font-weight: 700;
+    background: #eef2fb;
+    color: #4a7aba;
+    font-size: 15px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -164,36 +135,21 @@
     color: #9c8b85;
     margin-top: 2px;
     display: flex;
-    gap: 6px;
+    gap: 8px;
   }
 
-  &-arrow {
-    font-size: 11px;
-    color: #c9b8b0;
-  }
+  &-arrow { font-size: 11px; color: #c9b8b0; }
 
   &-new {
-    &:active { background: #fdf3ec; }
-
-    .client-option-new-icon {
-      flex-shrink: 0;
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      background: rgba(200, 90, 26, 0.10);
-      color: #c85a1a;
-      font-size: 15px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+    &:active { background: #f0f5ff; }
+    .supplier-option-new-icon {
+      background: rgba(74, 122, 186, 0.10);
+      color: #4a7aba;
     }
-
-    .client-option-name { color: #c85a1a; }
-    .client-option-sub  { color: #9c8b85; }
+    .supplier-option-name { color: #4a7aba; }
   }
 }
 
-/* ── Labels opcionales en el modal ── */
 .optional-label {
   font-size: 11px;
   color: #9c8b85;

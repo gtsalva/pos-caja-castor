@@ -37,6 +37,11 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./features/cierre-turno/cierre-turno.component').then(m => m.CierreTurnoComponent),
       },
+      {
+        path: 'cotizaciones',
+        loadChildren: () =>
+          import('./features/cotizaciones/cotizaciones.routes').then(m => m.cotizacionesRoutes),
+      },
     ],
   },
   { path: '**', redirectTo: 'caja' },

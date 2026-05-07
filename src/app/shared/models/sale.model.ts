@@ -1,21 +1,35 @@
-export type PaymentMethod = 'CASH' | 'CARD' | 'TRANSFER';
+export type PaymentMethod = 'CASH' | 'CARD' | 'TRANSFER' | 'VISACUOTAS';
 
 export interface CartItem {
   product_id: string;
   sku: string;
   name: string;
   unit_price: number;
+  min_sale_price: number | null;
+  custom_price?: number;
   stock: number;
   quantity: number;
 }
 
-export interface CreateSalePayload {
+export interface SalePaymentItem {
   payment_method: PaymentMethod;
-  client_id: string;
+  amount: number;
   payment_reference?: string;
+}
+
+export interface CreateSalePayload {
+  payments: SalePaymentItem[];
+  client_id: string;
   payment_document_url?: string;
   payment_receipt_url?: string;
-  items: { product_id: string; quantity: number }[];
+  items: { product_id: string; quantity: number; unit_price: number }[];
+}
+
+export interface SalePayment {
+  sale_payment_id: string;
+  payment_method: PaymentMethod;
+  amount: number;
+  payment_reference: string | null;
 }
 
 export interface Sale {
@@ -28,6 +42,7 @@ export interface Sale {
   payment_document_url: string | null;
   payment_receipt_url: string | null;
   created_at: string;
+  payments: SalePayment[];
   client: { client_id: string; full_name: string; nit: string | null; billing_address: string | null } | null;
   salesperson: { user_id: string; full_name: string };
   items: {

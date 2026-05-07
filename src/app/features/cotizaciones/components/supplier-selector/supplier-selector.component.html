@@ -1,0 +1,106 @@
+<div class="supplier-selector">
+
+  @if (selectedSupplier(); as s) {
+    <div class="supplier-card">
+      <div class="supplier-card-avatar">
+        <span nz-icon nzType="shop" nzTheme="outline"></span>
+      </div>
+      <div class="supplier-card-body">
+        <div class="supplier-card-name">{{ s.name }}</div>
+        <div class="supplier-card-meta">
+          @if (s.contact_name) {
+            <span class="supplier-card-contact">
+              <span nz-icon nzType="user" nzTheme="outline"></span>
+              {{ s.contact_name }}
+            </span>
+          }
+          @if (s.phone) {
+            <span class="supplier-card-phone">{{ formatPhone(s.phone) }}</span>
+          }
+        </div>
+      </div>
+      <button class="supplier-card-change" (mousedown)="clearSupplier()">
+        <span nz-icon nzType="edit" nzTheme="outline"></span>
+        Cambiar
+      </button>
+    </div>
+  } @else {
+    <nz-input-group [nzSuffix]="supplierSuffix" [nzPrefix]="supplierPrefix">
+      <input
+        nz-input
+        placeholder="Buscar proveedor por nombre..."
+        [value]="searchText()"
+        (input)="onSearchInput($any($event.target).value)"
+        (blur)="showDropdown.set(false)"
+      />
+    </nz-input-group>
+  }
+
+  <ng-template #supplierPrefix>
+    <span nz-icon nzType="shop"></span>
+  </ng-template>
+
+  <ng-template #supplierSuffix>
+    @if (searching()) {
+      <span nz-icon nzType="loading"></span>
+    }
+  </ng-template>
+
+  @if (showDropdown() && (results().length > 0 || searchText().length >= 2)) {
+    <div class="supplier-dropdown" (mousedown)="$event.preventDefault()">
+      @for (s of results(); track s.supplier_id) {
+        <div class="supplier-option" (mousedown)="selectSupplier(s)">
+          <div class="supplier-option-icon"><span nz-icon nzType="shop"></span></div>
+          <div class="supplier-option-body">
+            <div class="supplier-option-name">{{ s.name }}</div>
+            @if (s.contact_name || s.phone) {
+              <div class="supplier-option-sub">
+                @if (s.contact_name) { <span>{{ s.contact_name }}</span> }
+                @if (s.phone) { <span>{{ formatPhone(s.phone) }}</span> }
+              </div>
+            }
+          </div>
+          <span nz-icon nzType="right" class="supplier-option-arrow"></span>
+        </div>
+      }
+      <div class="supplier-option supplier-option-new" (mousedown)="openNewModal()">
+        <div class="supplier-option-new-icon"><span nz-icon nzType="plus"></span></div>
+        <div class="supplier-option-body">
+          <div class="supplier-option-name">Crear nuevo proveedor</div>
+          <div class="supplier-option-sub">{{ searchText() }}</div>
+        </div>
+      </div>
+    </div>
+  }
+</div>
+
+<nz-modal
+  [nzVisible]="showNewModal()"
+  nzTitle="Nuevo proveedor"
+  [nzOkLoading]="saving()"
+  nzOkText="Guardar"
+  nzCancelText="Cancelar"
+  (nzOnOk)="saveNewSupplier()"
+  (nzOnCancel)="showNewModal.set(false)"
+>
+  <ng-container *nzModalContent>
+    <nz-form-item>
+      <nz-form-label [nzRequired]="true">Nombre del proveedor</nz-form-label>
+      <nz-form-control>
+        <input nz-input [(ngModel)]="newSupplier.name" placeholder="Ej: Muebles El Pino" />
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-label>Contacto <span class="optional-label">(Opcional)</span></nz-form-label>
+      <nz-form-control>
+        <input nz-input [(ngModel)]="newSupplier.contact_name" placeholder="Nombre del contacto" />
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-label>Teléfono <span class="optional-label">(Opcional)</span></nz-form-label>
+      <nz-form-control>
+        <input nz-input [(ngModel)]="newSupplier.phone" placeholder="+502 5555-0000" inputmode="tel" />
+      </nz-form-control>
+    </nz-form-item>
+  </ng-container>
+</nz-modal>

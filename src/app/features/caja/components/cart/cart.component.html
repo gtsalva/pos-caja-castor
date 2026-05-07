@@ -8,10 +8,46 @@
   } @else {
     <nz-list class="cart-list">
       @for (item of cart.items(); track item.product_id) {
-        <nz-list-item class="cart-item">
+        @let effectivePrice = item.custom_price ?? item.unit_price;
+        @let isPriceInvalid = item.min_sale_price != null && effectivePrice < item.min_sale_price;
+        <nz-list-item class="cart-item" [class.cart-item--invalid]="isPriceInvalid">
           <div class="cart-item-info">
             <div class="cart-item-name">{{ item.name }}</div>
             <div class="cart-item-sku">{{ item.sku }}</div>
+            <div class="cart-item-price-row">
+              <button
+                nz-button nzType="text" nzSize="small"
+                class="price-adj-btn"
+                [disabled]="effectivePrice <= (item.min_sale_price ?? 0) + 0.001"
+                (click)="adjustItemPrice(item, -10)"
+              >
+                <span nz-icon nzType="minus"></span>
+              </button>
+              <nz-input-number
+                [ngModel]="effectivePrice"
+                (ngModelChange)="onPriceChange(item, $event)"
+                [nzMin]="0.01"
+                [nzPrecision]="2"
+                [nzStep]="10"
+                nzSize="small"
+                class="price-adj-input"
+                [class.price-adj-input--negotiated]="item.custom_price != null && !isPriceInvalid"
+                [class.price-adj-input--invalid]="isPriceInvalid"
+              />
+              <button
+                nz-button nzType="text" nzSize="small"
+                class="price-adj-btn"
+                (click)="adjustItemPrice(item, 10)"
+              >
+                <span nz-icon nzType="plus"></span>
+              </button>
+            </div>
+            @if (isPriceInvalid) {
+              <div class="cart-item-price-error">
+                <span nz-icon nzType="stop" nzTheme="fill"></span>
+                Mín. {{ item.min_sale_price | quetzales }}
+              </div>
+            }
           </div>
           <div class="cart-item-controls">
             <nz-input-number
@@ -22,8 +58,12 @@
               nzSize="small"
               (ngModelChange)="onQuantityChange(item, $event ?? 1)"
             />
-            <span class="cart-item-subtotal">
-              {{ item.unit_price * item.quantity | quetzales }}
+            <span
+              class="cart-item-subtotal"
+              [class.cart-item-subtotal--negotiated]="item.custom_price != null && !isPriceInvalid"
+              [class.cart-item-subtotal--invalid]="isPriceInvalid"
+            >
+              {{ effectivePrice * item.quantity | quetzales }}
             </span>
             <button nz-button nzType="text" nzDanger nzSize="small" (click)="removeItem(item)">
               <span nz-icon nzType="delete"></span>
@@ -41,6 +81,13 @@
         {{ cart.total() | quetzales }}
       </span>
     </div>
+
+    @if (cart.hasInvalidPrices()) {
+      <div class="cart-invalid-warning">
+        <span nz-icon nzType="warning" nzTheme="fill" class="cart-invalid-warning-icon"></span>
+        <span>Corrige los precios en rojo antes de continuar</span>
+      </div>
+    }
 
     <button
       nz-button

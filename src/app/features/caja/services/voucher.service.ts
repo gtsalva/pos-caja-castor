@@ -1,14 +1,13 @@
 import { Injectable } from '@angular/core';
 import jsPDF from 'jspdf';
-import { CartItem, PaymentMethod } from '../../../shared/models/sale.model';
+import { CartItem, PaymentMethod, SalePaymentItem } from '../../../shared/models/sale.model';
 import { Client } from '../../../shared/models/client.model';
 
 export interface VoucherData {
   client: Client;
   items: CartItem[];
   total: number;
-  payment_method: PaymentMethod;
-  payment_reference?: string;
+  payments: SalePaymentItem[];
 }
 
 @Injectable({ providedIn: 'root' })
@@ -17,6 +16,7 @@ export class VoucherService {
     CASH: 'Efectivo',
     CARD: 'Tarjeta',
     TRANSFER: 'Transferencia',
+    VISACUOTAS: 'Visa Cuotas',
   };
 
   generate(data: VoucherData): Blob {
@@ -116,13 +116,21 @@ export class VoucherService {
     y += 8;
 
     // Payment info
+    doc.setFont('helvetica', 'bold');
     doc.setFontSize(9);
-    doc.setFont('helvetica', 'normal');
-    doc.text(`Método de pago: ${this.paymentLabels[data.payment_method]}`, margin, y);
+    doc.text('FORMA DE PAGO', margin, y);
     y += 5;
-    if (data.payment_reference) {
-      doc.text(`No. autorización: ${data.payment_reference}`, margin, y);
+    doc.setFont('helvetica', 'normal');
+    for (const p of data.payments) {
+      addPageIfNeeded(10);
+      const label = this.paymentLabels[p.payment_method];
+      const amountStr = formatQ(p.amount);
+      doc.text(`${label}: ${amountStr}`, margin, y);
       y += 5;
+      if (p.payment_reference) {
+        doc.text(`  No. autorización: ${p.payment_reference}`, margin, y);
+        y += 5;
+      }
     }
 
     y += 6;

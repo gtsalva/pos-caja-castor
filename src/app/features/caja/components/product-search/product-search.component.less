@@ -130,14 +130,119 @@
 }
 
 .detail-price {
-
   font-size: 22px;
   font-weight: 600;
   color: #c85a1a;
+
+  &--dimmed {
+    font-size: 14px;
+    color: #aaa;
+    text-decoration: line-through;
+    font-weight: 400;
+  }
+}
+
+.detail-row--price-editor {
+  align-items: center;
+}
+
+.price-editor {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex: 1;
+}
+
+.price-editor-btn {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: #c85a1a !important;
+  border: 1px solid #e8d5c4 !important;
+  border-radius: 8px !important;
+  padding: 0 !important;
+
+  &:disabled {
+    opacity: 0.35;
+  }
+}
+
+@keyframes price-shake {
+  0%, 100% { transform: translateX(0); }
+  20%       { transform: translateX(-5px); }
+  40%       { transform: translateX(5px); }
+  60%       { transform: translateX(-4px); }
+  80%       { transform: translateX(4px); }
+}
+
+.price-editor-input {
+  flex: 1;
+
+  :deep(.ant-input-number) {
+    border-color: #d9d9d9;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  &--negotiated :deep(.ant-input-number) {
+    border-color: #c85a1a;
+    box-shadow: 0 0 0 2px rgba(200, 90, 26, 0.12);
+
+    .ant-input-number-input {
+      color: #c85a1a;
+      font-weight: 700;
+    }
+  }
+
+  &--invalid {
+    animation: price-shake 0.35s ease;
+
+    :deep(.ant-input-number) {
+      border-color: #D92929;
+      box-shadow: 0 0 0 2px rgba(217, 41, 41, 0.18);
+
+      .ant-input-number-input {
+        color: #D92929;
+        font-weight: 700;
+      }
+    }
+  }
+}
+
+.detail-min-price {
+  font-size: 11px;
+  color: #bbb;
+  padding-left: 88px;
+  margin-top: -6px;
+}
+
+.detail-price-error {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: -4px;
+  padding: 8px 12px;
+  background: #FFF0F0;
+  border: 1px solid #FFCDD2;
+  border-radius: 8px;
+  font-size: 12px;
+  color: #D92929;
+  animation: price-shake 0.35s ease;
+
+  &-icon {
+    font-size: 14px;
+    color: #D92929;
+    flex-shrink: 0;
+  }
+
+  strong {
+    font-weight: 700;
+  }
 }
 
 .product-price {
-
   font-size: 17px;
   font-weight: 600;
   color: #c85a1a;

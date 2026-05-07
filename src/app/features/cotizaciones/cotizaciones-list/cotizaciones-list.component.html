@@ -1,0 +1,43 @@
+<div class="cot-header">
+  <h2 class="cot-title">Mis cotizaciones</h2>
+  <button nz-button nzType="primary" nzSize="large" (click)="goToNew()">
+    <span nz-icon nzType="plus"></span> Nueva
+  </button>
+</div>
+
+@if (loading()) {
+  <div class="loading-wrap"><nz-spin nzTip="Cargando…" /></div>
+} @else if (orders().length === 0) {
+  <div class="empty-state">
+    <nz-empty nzNotFoundContent="No tienes cotizaciones aún">
+      <ng-template #nzNoResult>
+        <button nz-button nzType="primary" nzSize="large" (click)="goToNew()">
+          <span nz-icon nzType="plus"></span> Crear primera cotización
+        </button>
+      </ng-template>
+    </nz-empty>
+  </div>
+} @else {
+  <nz-list class="cot-list">
+    @for (o of orders(); track o.custom_order_id) {
+      <nz-list-item class="cot-item" (click)="open(o)">
+        <div class="cot-item-main">
+          <div class="cot-item-top">
+            <span class="cot-number">{{ o.order_number }}</span>
+            <nz-tag [nzColor]="statusColors[o.status]">{{ statusLabels[o.status] }}</nz-tag>
+          </div>
+          <div class="cot-client">{{ clientLabel(o) }}</div>
+          @if (o.delivery_date) {
+            <div class="cot-delivery">Entrega: {{ o.delivery_date | date:'dd/MM/yyyy' }}</div>
+          }
+        </div>
+        <div class="cot-item-right">
+          <div class="cot-total">{{ o.total | quetzales }}</div>
+          @if (balance(o) > 0) {
+            <div class="cot-balance">Saldo: {{ balance(o) | quetzales }}</div>
+          }
+        </div>
+      </nz-list-item>
+    }
+  </nz-list>
+}
