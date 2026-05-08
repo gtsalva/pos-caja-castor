@@ -49,6 +49,7 @@ import {
   PhoneOutline,
   ShopOutline,
   ToolOutline,
+  ToolFill
 } from '@ant-design/icons-angular/icons';
 
 registerLocaleData(es);
@@ -97,7 +98,8 @@ export const appConfig: ApplicationConfig = {
       ArrowLeftOutline,
       PhoneOutline,
       ShopOutline,
-      ToolOutline
+      ToolOutline,
+      ToolFill
     ]),
     { provide: NZ_I18N, useValue: es_ES },
     { provide: LOCALE_ID, useValue: 'es-GT' },
