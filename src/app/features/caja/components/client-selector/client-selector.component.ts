@@ -1,5 +1,6 @@
 import {
   Component,
+  computed,
   inject,
   signal,
   output,
@@ -14,9 +15,16 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { NzModalModule } from 'ng-zorro-antd/modal';
 import { NzFormModule } from 'ng-zorro-antd/form';
+import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { CajaApiService } from '../../services/caja-api.service';
 import { Client, CreateClientPayload } from '../../../../shared/models/client.model';
+import {
+  DEPARTAMENTOS_GUATEMALA,
+  DEFAULT_DEPARTAMENTO,
+  DEFAULT_MUNICIPIO,
+  getMunicipios,
+} from '../../../../shared/data/guatemala-locations';
 
 @Component({
   selector: 'app-client-selector',
@@ -29,6 +37,7 @@ import { Client, CreateClientPayload } from '../../../../shared/models/client.mo
     NzSpinModule,
     NzModalModule,
     NzFormModule,
+    NzSelectModule,
   ],
   templateUrl: './client-selector.component.html',
   styleUrl: './client-selector.component.less',
@@ -48,14 +57,19 @@ export class ClientSelectorComponent implements OnDestroy {
 
   readonly showNewModal = signal(false);
   readonly saving = signal(false);
+
+  readonly departamentos = DEPARTAMENTOS_GUATEMALA;
+  readonly selectedDept = signal(DEFAULT_DEPARTAMENTO);
+  readonly currentMunicipios = computed(() => getMunicipios(this.selectedDept()));
+
   readonly newClient: CreateClientPayload = {
     full_name: '',
     phone: '',
     nit: 'CF',
     email: '',
     billing_address: '',
-    billing_city: '',
-    billing_department: '',
+    billing_department: DEFAULT_DEPARTAMENTO,
+    billing_city: DEFAULT_MUNICIPIO,
   };
 
   constructor() {
@@ -100,21 +114,27 @@ export class ClientSelectorComponent implements OnDestroy {
     this.clientSelected.emit(null);
   }
 
+  onDeptChange(dept: string): void {
+    this.selectedDept.set(dept);
+    this.newClient.billing_city = this.currentMunicipios()[0] ?? '';
+  }
+
   openNewModal(): void {
     this.newClient.full_name = this.searchText();
     this.newClient.phone = '';
     this.newClient.nit = 'CF';
     this.newClient.email = '';
     this.newClient.billing_address = '';
-    this.newClient.billing_city = '';
-    this.newClient.billing_department = '';
+    this.newClient.billing_department = DEFAULT_DEPARTAMENTO;
+    this.newClient.billing_city = DEFAULT_MUNICIPIO;
+    this.selectedDept.set(DEFAULT_DEPARTAMENTO);
     this.showDropdown.set(false);
     this.showNewModal.set(true);
   }
 
   saveNewClient(): void {
     if (!this.newClient.full_name.trim()) return;
-    if (!this.newClient.billing_address.trim() || !this.newClient.billing_city.trim() || !this.newClient.billing_department.trim()) return;
+    if (!this.newClient.billing_address.trim()) return;
     this.saving.set(true);
     this.api.createClient(this.newClient).subscribe({
       next: client => {

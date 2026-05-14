@@ -93,15 +93,32 @@
       </nz-form-control>
     </nz-form-item>
     <nz-form-item>
-      <nz-form-label [nzRequired]="true">Ciudad</nz-form-label>
+      <nz-form-label [nzRequired]="true">Departamento</nz-form-label>
       <nz-form-control>
-        <input nz-input [(ngModel)]="newClient.billing_city" placeholder="Guatemala" />
+        <nz-select
+          [(ngModel)]="newClient.billing_department"
+          (ngModelChange)="onDeptChange($event)"
+          nzShowSearch
+          nzSize="large"
+          nzPlaceHolder="Seleccionar departamento">
+          @for (d of departamentos; track d.name) {
+            <nz-option [nzValue]="d.name" [nzLabel]="d.name" />
+          }
+        </nz-select>
       </nz-form-control>
     </nz-form-item>
     <nz-form-item>
-      <nz-form-label [nzRequired]="true">Departamento</nz-form-label>
+      <nz-form-label [nzRequired]="true">Municipio</nz-form-label>
       <nz-form-control>
-        <input nz-input [(ngModel)]="newClient.billing_department" placeholder="Guatemala" />
+        <nz-select
+          [(ngModel)]="newClient.billing_city"
+          nzShowSearch
+          nzSize="large"
+          nzPlaceHolder="Seleccionar municipio">
+          @for (m of currentMunicipios(); track m) {
+            <nz-option [nzValue]="m" [nzLabel]="m" />
+          }
+        </nz-select>
       </nz-form-control>
     </nz-form-item>
     <nz-form-item>
