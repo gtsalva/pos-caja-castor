@@ -2,7 +2,12 @@
 
   @if (selectedClient(); as c) {
     <div class="client-card">
-      <div class="client-card-avatar">{{ c.full_name.charAt(0).toUpperCase() }}</div>
+      @if (c.photo_url) {
+        <nz-avatar [nzSrc]="c.photo_url" [nzSize]="40" class="client-card-avatar" />
+      } @else {
+        <nz-avatar [nzText]="c.full_name.charAt(0).toUpperCase()" [nzSize]="40" class="client-card-avatar"
+          style="background:#C85A1A;color:#fff;font-weight:700;flex-shrink:0" />
+      }
       <div class="client-card-body">
         <div class="client-card-name">{{ c.full_name }}</div>
         <div class="client-card-meta">
@@ -48,7 +53,12 @@
     <div class="client-dropdown" (mousedown)="$event.preventDefault()">
       @for (c of results(); track c.client_id) {
         <div class="client-option" (mousedown)="selectClient(c)">
-          <div class="client-option-avatar">{{ c.full_name.charAt(0).toUpperCase() }}</div>
+          @if (c.photo_url) {
+            <nz-avatar [nzSrc]="c.photo_url" [nzSize]="36" class="client-option-avatar" />
+          } @else {
+            <nz-avatar [nzText]="c.full_name.charAt(0).toUpperCase()" [nzSize]="36" class="client-option-avatar"
+              style="background:#C85A1A;color:#fff;font-weight:600;flex-shrink:0" />
+          }
           <div class="client-option-body">
             <div class="client-option-name">{{ c.full_name }}</div>
             <div class="client-option-sub">

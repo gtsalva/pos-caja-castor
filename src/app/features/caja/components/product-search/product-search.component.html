@@ -37,6 +37,13 @@
   <div class="product-grid">
     @for (p of visibleProducts(); track p.product_id) {
       <div class="product-card" [class.product-card--out]="p.stock <= 0" (click)="openDetail(p)">
+        <div class="product-card-image">
+          @if (p.image_url) {
+            <nz-avatar [nzSrc]="p.image_url" nzShape="square" [nzSize]="48" />
+          } @else {
+            <nz-avatar nzShape="square" [nzSize]="48" nzIcon="shopping" style="background:#EDE0D4;color:#C85A1A" />
+          }
+        </div>
         <div class="product-card-main">
           <div class="product-name">{{ p.name }}</div>
           <div class="product-sku">{{ p.sku }}</div>
@@ -77,6 +84,11 @@
   <ng-container *nzModalContent>
     @if (selectedForDetail(); as p) {
       <div class="detail-body">
+        @if (p.image_url) {
+          <div style="text-align:center;margin-bottom:12px">
+            <nz-avatar [nzSrc]="p.image_url" nzShape="square" [nzSize]="80" />
+          </div>
+        }
         <div class="detail-row">
           <span class="detail-label">SKU</span>
           <span class="detail-value">{{ p.sku }}</span>

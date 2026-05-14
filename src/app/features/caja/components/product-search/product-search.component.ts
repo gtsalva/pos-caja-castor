@@ -9,6 +9,7 @@ import { NzEmptyModule } from 'ng-zorro-antd/empty';
 import { NzModalModule } from 'ng-zorro-antd/modal';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzSwitchModule } from 'ng-zorro-antd/switch';
+import { NzAvatarModule } from 'ng-zorro-antd/avatar';
 import { QuetzalesPipe } from '../../../../shared/pipes/quetzales.pipe';
 import { Product } from '../../../../shared/models/product.model';
 
@@ -27,6 +28,7 @@ import { Product } from '../../../../shared/models/product.model';
     NzButtonModule,
     NzSwitchModule,
     NzInputNumberModule,
+    NzAvatarModule,
   ],
   templateUrl: './product-search.component.html',
   styleUrl: './product-search.component.less',

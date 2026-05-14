@@ -10,6 +10,7 @@ export interface Product {
   is_active: boolean;
   category_id: string | null;
   category: { category_id: string; name: string } | null;
+  image_url: string | null;
 }
 
 export interface PaginatedResult<T> {

@@ -16,6 +16,7 @@ import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { NzModalModule } from 'ng-zorro-antd/modal';
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzSelectModule } from 'ng-zorro-antd/select';
+import { NzAvatarModule } from 'ng-zorro-antd/avatar';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { CajaApiService } from '../../services/caja-api.service';
 import { Client, CreateClientPayload } from '../../../../shared/models/client.model';
@@ -38,6 +39,7 @@ import {
     NzModalModule,
     NzFormModule,
     NzSelectModule,
+    NzAvatarModule,
   ],
   templateUrl: './client-selector.component.html',
   styleUrl: './client-selector.component.less',

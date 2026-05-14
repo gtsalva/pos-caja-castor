@@ -9,6 +9,7 @@ export interface Client {
   billing_address: string | null;
   billing_city: string | null;
   billing_department: string | null;
+  photo_url: string | null;
   is_active: boolean;
 }
 
