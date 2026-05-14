@@ -8,6 +8,7 @@ import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzAlertModule } from 'ng-zorro-antd/alert';
 import { AuthService } from '../../../core/services/auth.service';
+import { StoreSettingsService } from '../../../shared/services/store-settings.service';
 
 @Component({
   selector: 'app-login',
@@ -27,6 +28,7 @@ import { AuthService } from '../../../core/services/auth.service';
 export class LoginComponent {
   private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
+  readonly store_name = inject(StoreSettingsService).store_name;
 
   readonly isLoading = signal(false);
   readonly errorMsg = signal<string | null>(null);

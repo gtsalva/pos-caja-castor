@@ -2,7 +2,7 @@
   <header class="shell-header">
     <div class="brand">
       <div class="brand-icon"><span>C</span></div>
-      <span class="brand-name">El Castor</span>
+      <span class="brand-name">{{ store_name() }}</span>
     </div>
     <div class="header-user" nz-dropdown [nzDropdownMenu]="userMenu" nzPlacement="bottomRight">
       @if (currentUser()?.photo_url) {

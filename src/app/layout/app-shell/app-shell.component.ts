@@ -6,6 +6,7 @@ import { NzMenuModule } from 'ng-zorro-antd/menu';
 import { NzAvatarModule } from 'ng-zorro-antd/avatar';
 import { AuthService } from '../../core/services/auth.service';
 import { BottomNavComponent } from '../bottom-nav/bottom-nav.component';
+import { StoreSettingsService } from '../../shared/services/store-settings.service';
 
 @Component({
   selector: 'app-app-shell',
@@ -17,6 +18,7 @@ import { BottomNavComponent } from '../bottom-nav/bottom-nav.component';
 export class AppShellComponent {
   private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
+  readonly store_name = inject(StoreSettingsService).store_name;
 
   readonly currentUser = this.auth.currentUser;
 

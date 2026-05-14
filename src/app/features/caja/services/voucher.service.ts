@@ -1,7 +1,8 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import jsPDF from 'jspdf';
 import { CartItem, PaymentMethod, SalePaymentItem } from '../../../shared/models/sale.model';
 import { Client } from '../../../shared/models/client.model';
+import { StoreSettingsService } from '../../../shared/services/store-settings.service';
 
 export interface VoucherData {
   client: Client;
@@ -12,6 +13,8 @@ export interface VoucherData {
 
 @Injectable({ providedIn: 'root' })
 export class VoucherService {
+  private readonly storeSettings = inject(StoreSettingsService);
+
   private readonly paymentLabels: Record<PaymentMethod, string> = {
     CASH: 'Efectivo',
     CARD: 'Tarjeta',
@@ -42,7 +45,7 @@ export class VoucherService {
     // Header
     doc.setFontSize(14);
     doc.setFont('helvetica', 'bold');
-    doc.text('Mueblería El Castor', pageW / 2, y, { align: 'center' });
+    doc.text(this.storeSettings.store_name(), pageW / 2, y, { align: 'center' });
     y += 6;
     doc.setFontSize(10);
     doc.setFont('helvetica', 'normal');

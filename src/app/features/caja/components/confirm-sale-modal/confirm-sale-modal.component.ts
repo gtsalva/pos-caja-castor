@@ -18,6 +18,7 @@ import { QuetzalesPipe } from '../../../../shared/pipes/quetzales.pipe';
 import { CartService } from '../../services/cart.service';
 import { CajaApiService } from '../../services/caja-api.service';
 import { VoucherService } from '../../services/voucher.service';
+import { StoreSettingsService } from '../../../../shared/services/store-settings.service';
 import { PaymentMethod, Sale, SalePaymentItem } from '../../../../shared/models/sale.model';
 
 export interface PaymentSplit {
@@ -57,6 +58,7 @@ export class ConfirmSaleModalComponent {
   private readonly voucher = inject(VoucherService);
   private readonly message = inject(NzMessageService);
   private readonly destroyRef = inject(DestroyRef);
+  readonly store_name = inject(StoreSettingsService).store_name;
 
   readonly step = signal<Step>('payment');
   readonly paymentSplits = signal<PaymentSplit[]>([{ method: 'CASH', amount: 0, auth_number: '' }]);
