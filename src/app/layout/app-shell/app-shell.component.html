@@ -5,7 +5,12 @@
       <span class="brand-name">El Castor</span>
     </div>
     <div class="header-user" nz-dropdown [nzDropdownMenu]="userMenu" nzPlacement="bottomRight">
-      <span nz-icon nzType="user"></span>
+      @if (currentUser()?.photo_url) {
+        <nz-avatar [nzSrc]="currentUser()!.photo_url!" nzSize="small" />
+      } @else {
+        <nz-avatar [nzText]="avatarInitials()" nzSize="small"
+          style="background:#C85A1A;color:#fff;font-weight:600" />
+      }
       <span class="username">{{ currentUser()?.full_name }}</span>
       <span nz-icon nzType="down"></span>
     </div>

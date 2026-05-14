@@ -48,16 +48,22 @@ export class AuthService {
     this._currentUser.set(null);
   }
 
+  updatePhoto(photo_url: string | null): void {
+    const user = this._currentUser();
+    if (user) this._currentUser.set({ ...user, photo_url });
+  }
+
   private restoreUserFromToken(): void {
     const token = this._token();
     if (!token) return;
     try {
       const payload = JSON.parse(atob(token.split('.')[1]));
       this._currentUser.set({
-        user_id: payload.sub,
-        email: payload.email,
+        user_id:   payload.sub,
+        email:     payload.email,
         full_name: payload.name,
-        role: payload.role,
+        role:      payload.role,
+        photo_url: payload.photo_url ?? null,
       });
     } catch {
       this.logout();
