@@ -19,6 +19,10 @@ export class AppShellComponent {
 
   readonly currentUser = this.auth.currentUser;
 
+  goToPerfil(): void {
+    this.router.navigate(['/perfil']);
+  }
+
   logout(): void {
     this.auth.logout();
     this.router.navigate(['/login']);

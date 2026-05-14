@@ -13,6 +13,11 @@
       <ul nz-menu>
         <li nz-menu-item disabled>{{ currentUser()?.email }}</li>
         <li nz-menu-divider></li>
+        <li nz-menu-item (click)="goToPerfil()">
+          <span nz-icon nzType="key"></span>
+          Cambiar contraseña
+        </li>
+        <li nz-menu-divider></li>
         <li nz-menu-item (click)="logout()">
           <span nz-icon nzType="logout"></span>
           Cerrar sesión

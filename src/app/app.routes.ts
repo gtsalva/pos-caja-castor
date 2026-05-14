@@ -42,6 +42,11 @@ export const routes: Routes = [
         loadChildren: () =>
           import('./features/cotizaciones/cotizaciones.routes').then(m => m.cotizacionesRoutes),
       },
+      {
+        path: 'perfil',
+        loadComponent: () =>
+          import('./features/auth/change-password/change-password.component').then(m => m.ChangePasswordComponent),
+      },
     ],
   },
   { path: '**', redirectTo: 'caja' },

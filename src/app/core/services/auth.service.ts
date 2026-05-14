@@ -23,8 +23,6 @@ export class AuthService {
   }
 
   login(email: string, password: string): Observable<AuthResponse> {
-    console.log("test")
-    console.log('[AuthService] Login called with:', email);
     return this.http
       .post<ApiResponse<AuthResponse>>(`${environment.apiUrl}/auth/login`, { email, password })
       .pipe(
@@ -33,9 +31,15 @@ export class AuthService {
           sessionStorage.setItem(TOKEN_KEY, data.access_token);
           this._token.set(data.access_token);
           this._currentUser.set(data.user);
-          console.log('[AuthService] currentUser set:', this._currentUser()); // ← temp 
         })
       );
+  }
+
+  changePassword(current_password: string, new_password: string): Observable<void> {
+    return this.http.patch<void>(`${environment.apiUrl}/users/me/password`, {
+      current_password,
+      new_password,
+    });
   }
 
   logout(): void {
