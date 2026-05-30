@@ -22,6 +22,13 @@ export interface CustomOrderPayment {
   created_at:        string;
 }
 
+export interface CustomOrderPrintReceipt {
+  print_receipt_id: string;
+  printed_by:       { user_id: string; full_name: string };
+  pdf_url:          string | null;
+  created_at:       string;
+}
+
 export interface CustomOrder {
   custom_order_id:  string;
   order_number:     string;
@@ -34,9 +41,11 @@ export interface CustomOrder {
   client_notes:     string | null;
   delivery_date:    string | null;
   total:            number;
+  agreed_price:     number | null;
   total_paid:       number;
   items:            CustomOrderItem[];
   payments:         CustomOrderPayment[];
+  print_receipts:   CustomOrderPrintReceipt[];
   created_at:       string;
   updated_at:       string;
 }

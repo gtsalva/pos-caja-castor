@@ -59,7 +59,7 @@ export const DEPARTAMENTOS_GUATEMALA: Departamento[] = [
     name: 'Guatemala',
     municipios: [
       'Guatemala', 'Amatitlán', 'Chinautla', 'Chuarrancho', 'Fraijanes',
-      'Mixco', 'Palencia', 'Petapa', 'San José del Golfo', 'San José Pinula',
+      'Mixco', 'Palencia', 'San José del Golfo', 'San José Pinula',
       'San Juan Sacatepéquez', 'San Miguel Petapa', 'San Pedro Ayampuc',
       'San Pedro Sacatepéquez', 'San Raimundo', 'Santa Catarina Pinula',
       'Villa Canales', 'Villa Nueva',
@@ -71,7 +71,7 @@ export const DEPARTAMENTOS_GUATEMALA: Departamento[] = [
       'Huehuetenango', 'Aguacatán', 'Barillas', 'Chiantla', 'Colotenango',
       'Concepción Huista', 'Cuilco', 'Jacaltenango', 'La Democracia',
       'La Libertad', 'Malacatancito', 'Nentón', 'San Antonio Huista',
-      'San Gaspar Ixchil', 'San Idelfonso Ixtahuacán', 'San Juan Atitán',
+      'San Gaspar Ixchil', 'San Ildefonso Ixtahuacán', 'San Juan Atitán',
       'San Juan Ixcoy', 'San Marcos Huista', 'San Mateo Ixtatán',
       'San Miguel Acatán', 'San Pedro Necta', 'San Rafael La Independencia',
       'San Rafael Petzal', 'San Sebastián Coatán', 'San Sebastián Huehuetenango',
@@ -125,11 +125,11 @@ export const DEPARTAMENTOS_GUATEMALA: Departamento[] = [
   {
     name: 'Quiché',
     municipios: [
-      'Santa Cruz del Quiché', 'Canillá', 'Chajul', 'Chichicastenango',
-      'Chinique', 'Cunén', 'Ixcán', 'Joyabaj', 'Nebaj', 'Pachalum',
-      'Patzité', 'Sacapulas', 'San Andrés Sajcabajá', 'San Antonio Ilotenango',
-      'San Bartolomé Jocotenango', 'San Juan Cotzal', 'San Pedro Jocopilas',
-      'Uspantán', 'Zacualpa',
+      'Santa Cruz del Quiché', 'Canillá', 'Chajul', 'Chicamán', 'Chiché',
+      'Chichicastenango', 'Chinique', 'Cunén', 'Ixcán', 'Joyabaj', 'Nebaj',
+      'Pachalum', 'Patzité', 'Sacapulas', 'San Andrés Sajcabajá',
+      'San Antonio Ilotenango', 'San Bartolomé Jocotenango', 'San Juan Cotzal',
+      'San Pedro Jocopilas', 'Uspantán', 'Zacualpa',
     ],
   },
   {
@@ -157,7 +157,7 @@ export const DEPARTAMENTOS_GUATEMALA: Departamento[] = [
       'El Quetzal', 'El Rodeo', 'El Tumbador', 'Esquipulas Palo Gordo',
       'Ixchiguán', 'La Blanca', 'La Reforma', 'Malacatán', 'Nuevo Progreso',
       'Ocós', 'Pajapita', 'Río Blanco', 'San Antonio Sacatepéquez',
-      'San Cristóbal Cucho', 'San José El Rodeo', 'San José Ojetenam',
+      'San Cristóbal Cucho', 'San José Ojetenam',
       'San Lorenzo', 'San Miguel Ixtahuacán', 'San Pablo',
       'San Pedro Sacatepéquez', 'San Rafael Pie de la Cuesta',
       'Sibinal', 'Sipacapa', 'Tacaná', 'Tajumulco', 'Tejutla',

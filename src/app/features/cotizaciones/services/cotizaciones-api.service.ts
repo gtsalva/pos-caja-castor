@@ -44,6 +44,16 @@ export class CotizacionesApiService {
     return this.http.patch<ApiResponse<CustomOrder>>(`${this.base}/${id}/cancel`, {}).pipe(map(r => r.data));
   }
 
+  savePrintReceipt(id: string, file: File): Observable<CustomOrder> {
+    const form = new FormData();
+    form.append('file', file);
+    return this.http.post<ApiResponse<CustomOrder>>(`${this.base}/${id}/print-receipts`, form).pipe(map(r => r.data));
+  }
+
+  getDocumentBlob(url: string): Observable<Blob> {
+    return this.http.get(url, { responseType: 'blob' });
+  }
+
   // Suppliers
   searchSuppliers(search: string): Observable<Supplier[]> {
     const params = new HttpParams().set('search', search).set('is_active', 'true').set('limit', '20');
