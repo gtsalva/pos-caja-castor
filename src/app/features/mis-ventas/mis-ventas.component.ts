@@ -14,6 +14,7 @@ import { NzModalModule } from 'ng-zorro-antd/modal';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { CajaApiService } from '../caja/services/caja-api.service';
 import { Sale } from '../../shared/models/sale.model';
+import { Client } from '../../shared/models/client.model';
 
 @Component({
   selector: 'app-mis-ventas',
@@ -101,6 +102,13 @@ export class MisVentasComponent implements OnInit {
       },
       error: () => this.isLoadingDetail.set(false),
     });
+  }
+
+  clientAddress(client: Client | null): string | null {
+    if (!client) return null;
+    const parts = [client.billing_address, client.billing_city, client.billing_department]
+      .filter((p): p is string => !!p);
+    return parts.length > 0 ? parts.join(', ') : null;
   }
 
   closeDrawer(): void {

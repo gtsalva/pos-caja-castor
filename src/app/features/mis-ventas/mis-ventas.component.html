@@ -60,8 +60,23 @@
           <span nz-icon nzType="user" nzTheme="outline" class="detail-client-icon"></span>
           <div class="detail-client-info">
             <div class="detail-client-name">{{ sale.client?.full_name ?? 'Sin cliente' }}</div>
+            @if (sale.client?.business_name) {
+              <div class="detail-client-line">{{ sale.client!.business_name }}</div>
+            }
             @if (sale.client?.nit) {
-              <div class="detail-client-nit">NIT: {{ sale.client!.nit }}</div>
+              <div class="detail-client-line">NIT: {{ sale.client!.nit }}</div>
+            }
+            @if (sale.client?.dpi) {
+              <div class="detail-client-line">DPI: {{ sale.client!.dpi }}</div>
+            }
+            @if (sale.client?.phone) {
+              <div class="detail-client-line">Tel: {{ sale.client!.phone }}</div>
+            }
+            @if (sale.client?.email) {
+              <div class="detail-client-line">{{ sale.client!.email }}</div>
+            }
+            @if (clientAddress(sale.client)) {
+              <div class="detail-client-line">{{ clientAddress(sale.client) }}</div>
             }
           </div>
         </div>

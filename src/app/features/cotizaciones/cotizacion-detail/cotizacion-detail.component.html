@@ -16,12 +16,36 @@
     <div class="info-card">
       <div class="info-row">
         <span class="info-label">Cliente</span>
-        <span class="info-val">{{ clientLabel() }}</span>
+        <span class="info-val">{{ clientInfo().name }}</span>
       </div>
-      @if (o.client_phone) {
+      @if (clientInfo().business_name) {
+        <div class="info-row">
+          <span class="info-label">Empresa</span>
+          <span class="info-val">{{ clientInfo().business_name }}</span>
+        </div>
+      }
+      @if (clientInfo().nit) {
+        <div class="info-row">
+          <span class="info-label">NIT</span>
+          <span class="info-val">{{ clientInfo().nit }}</span>
+        </div>
+      }
+      @if (clientInfo().phone) {
         <div class="info-row">
           <span class="info-label">Teléfono</span>
-          <span class="info-val">{{ o.client_phone }}</span>
+          <span class="info-val">{{ clientInfo().phone }}</span>
+        </div>
+      }
+      @if (clientInfo().email) {
+        <div class="info-row">
+          <span class="info-label">Correo</span>
+          <span class="info-val">{{ clientInfo().email }}</span>
+        </div>
+      }
+      @if (clientInfo().address) {
+        <div class="info-row">
+          <span class="info-label">Dirección</span>
+          <span class="info-val">{{ clientInfo().address }}</span>
         </div>
       }
       @if (o.delivery_date) {

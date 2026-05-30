@@ -67,12 +67,31 @@ export class VoucherService {
     doc.setFont('helvetica', 'normal');
     doc.text(data.client.full_name, margin, y);
     y += 5;
+    if (data.client.business_name) {
+      doc.text(data.client.business_name, margin, y);
+      y += 5;
+    }
     if (data.client.nit) {
       doc.text(`NIT: ${data.client.nit}`, margin, y);
       y += 5;
     }
-    if (data.client.billing_address) {
-      const addrLines = doc.splitTextToSize(data.client.billing_address, pageW - 2 * margin) as string[];
+    if (data.client.dpi) {
+      doc.text(`DPI: ${data.client.dpi}`, margin, y);
+      y += 5;
+    }
+    if (data.client.phone) {
+      doc.text(`Tel: ${data.client.phone}`, margin, y);
+      y += 5;
+    }
+    if (data.client.email) {
+      doc.text(data.client.email, margin, y);
+      y += 5;
+    }
+    const addr = [data.client.billing_address, data.client.billing_city, data.client.billing_department]
+      .filter((p): p is string => !!p)
+      .join(', ');
+    if (addr) {
+      const addrLines = doc.splitTextToSize(addr, pageW - 2 * margin) as string[];
       doc.text(addrLines, margin, y);
       y += addrLines.length * 5;
     }
@@ -96,12 +115,13 @@ export class VoucherService {
     // Items rows
     doc.setFont('helvetica', 'normal');
     for (const item of data.items) {
-      const lineTotal = item.unit_price * item.quantity;
+      const effectivePrice = item.custom_price ?? item.unit_price;
+      const lineTotal      = effectivePrice * item.quantity;
       const nameLines = doc.splitTextToSize(item.name, 68) as string[];
       addPageIfNeeded(nameLines.length * 5 + 2);
       doc.text(nameLines, margin, y);
       doc.text(String(item.quantity), colQtyR, y, { align: 'right' });
-      doc.text(formatQ(item.unit_price), colPriceR, y, { align: 'right' });
+      doc.text(formatQ(effectivePrice), colPriceR, y, { align: 'right' });
       doc.text(formatQ(lineTotal), rightCol, y, { align: 'right' });
       y += nameLines.length * 5;
     }

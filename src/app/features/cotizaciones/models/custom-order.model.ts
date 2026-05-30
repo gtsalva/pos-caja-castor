@@ -1,4 +1,5 @@
 import { PaymentMethod } from '../../../shared/models/sale.model';
+import { Client } from '../../../shared/models/client.model';
 
 export type CustomOrderStatus =
   'DRAFT' | 'SENT' | 'APPROVED' | 'IN_PRODUCTION' | 'DELIVERED' | 'COMPLETED' | 'CANCELLED';
@@ -34,7 +35,7 @@ export interface CustomOrder {
   order_number:     string;
   status:           CustomOrderStatus;
   salesperson:      { user_id: string; full_name: string };
-  client:           { client_id: string; full_name: string } | null;
+  client:           Client | null;
   client_name:      string | null;
   client_phone:     string | null;
   client_email:     string | null;

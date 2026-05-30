@@ -134,10 +134,20 @@ export class CotizacionDetailComponent implements OnInit, OnDestroy {
 
   back(): void { this.router.navigate(['/cotizaciones']); }
 
-  clientLabel(): string {
+  readonly clientInfo = computed(() => {
     const o = this.order();
-    return o?.client?.full_name ?? o?.client_name ?? 'Sin cliente';
-  }
+    const c = o?.client ?? null;
+    const addressParts = [c?.billing_address, c?.billing_city, c?.billing_department]
+      .filter((p): p is string => !!p);
+    return {
+      name:          c?.full_name ?? o?.client_name ?? 'Sin cliente',
+      business_name: c?.business_name ?? null,
+      nit:           c?.nit ?? null,
+      phone:         c?.phone ?? o?.client_phone ?? null,
+      email:         c?.email ?? o?.client_email ?? null,
+      address:       addressParts.length > 0 ? addressParts.join(', ') : null,
+    };
+  });
 
   // ── Doc viewer ────────────────────────────────────────────────────────────
 

@@ -1,3 +1,5 @@
+import { Client } from './client.model';
+
 export type PaymentMethod = 'CASH' | 'CARD' | 'TRANSFER' | 'VISACUOTAS';
 
 export interface CartItem {
@@ -43,7 +45,7 @@ export interface Sale {
   payment_receipt_url: string | null;
   created_at: string;
   payments: SalePayment[];
-  client: { client_id: string; full_name: string; nit: string | null; billing_address: string | null } | null;
+  client: Client | null;
   salesperson: { user_id: string; full_name: string };
   items: {
     sale_item_id: string;

@@ -1,11 +1,14 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import jsPDF from 'jspdf';
 import { CustomOrder } from '../models/custom-order.model';
+import { StoreSettingsService } from '../../../shared/services/store-settings.service';
 
 @Injectable({ providedIn: 'root' })
 export class CotizacionPrintService {
+  private readonly storeSettings = inject(StoreSettingsService);
 
   generate(order: CustomOrder, printedAt: Date): Blob {
+    const storeName = this.storeSettings.store_name();
     const doc = new jsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait' });
     const pW = doc.internal.pageSize.getWidth();
     const pH = doc.internal.pageSize.getHeight();
@@ -21,7 +24,16 @@ export class CotizacionPrintService {
       ? Math.min(100, Math.round((order.total_paid / agreedTotal) * 100))
       : 0;
 
-    const clientName = order.client?.full_name ?? order.client_name ?? 'Sin nombre';
+    const c = order.client;
+    const clientName     = c?.full_name ?? order.client_name ?? 'Sin nombre';
+    const clientBusiness = c?.business_name ?? null;
+    const clientNit      = c?.nit ?? null;
+    const clientDpi      = c?.dpi ?? null;
+    const clientPhone    = c?.phone ?? order.client_phone ?? null;
+    const clientEmail    = c?.email ?? order.client_email ?? null;
+    const clientAddress  = [c?.billing_address, c?.billing_city, c?.billing_department]
+      .filter((p): p is string => !!p)
+      .join(', ') || null;
 
     const fmt = (n: number) =>
       `Q ${n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
@@ -37,8 +49,10 @@ export class CotizacionPrintService {
     const labelVal = (label: string, val: string): void => {
       doc.setFontSize(9);
       doc.setFont('helvetica', 'bold');   doc.text(label, m, y);
-      doc.setFont('helvetica', 'normal'); doc.text(val, m + 30, y);
-      y += 5;
+      doc.setFont('helvetica', 'normal');
+      const lines = doc.splitTextToSize(val, rEdge - (m + 30)) as string[];
+      doc.text(lines, m + 30, y);
+      y += Math.max(1, lines.length) * 5;
     };
 
     const statusLabels: Record<string, string> = {
@@ -54,7 +68,7 @@ export class CotizacionPrintService {
     doc.setFontSize(15);
     doc.setFont('helvetica', 'bold');
     doc.setTextColor(200, 90, 26);
-    doc.text('Mueblería El Castor', pW / 2, y, { align: 'center' });
+    doc.text(storeName, pW / 2, y, { align: 'center' });
     y += 6;
     doc.setFontSize(10);
     doc.setFont('helvetica', 'normal');
@@ -84,8 +98,12 @@ export class CotizacionPrintService {
     doc.text('INFORMACIÓN DEL CLIENTE', m, y);
     y += 5;
     labelVal('Cliente:', clientName);
-    if (order.client_phone) labelVal('Teléfono:', order.client_phone);
-    if (order.client_email) labelVal('Correo:', order.client_email);
+    if (clientBusiness)     labelVal('Empresa:', clientBusiness);
+    if (clientNit)          labelVal('NIT:', clientNit);
+    if (clientDpi)          labelVal('DPI:', clientDpi);
+    if (clientPhone)        labelVal('Teléfono:', clientPhone);
+    if (clientEmail)        labelVal('Correo:', clientEmail);
+    if (clientAddress)      labelVal('Dirección:', clientAddress);
     if (order.delivery_date) labelVal('Fecha entrega:', order.delivery_date);
     labelVal('Vendedor:', order.salesperson.full_name);
     labelVal('Fecha cotización:', fmtDate(order.created_at));
@@ -228,7 +246,7 @@ export class CotizacionPrintService {
       printedAt.toLocaleTimeString('es-GT', { hour: '2-digit', minute: '2-digit' });
     doc.text(`Documento generado el ${fmtDt}`, pW / 2, footerY - 1, { align: 'center' });
     doc.text(
-      'Mueblería El Castor — Este comprobante es informativo y no constituye factura oficial.',
+      `${storeName} — Este comprobante es informativo y no constituye factura oficial.`,
       pW / 2, footerY + 3, { align: 'center' },
     );
 
