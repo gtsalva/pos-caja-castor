@@ -2,6 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import jsPDF from 'jspdf';
 import { CustomOrder } from '../models/custom-order.model';
 import { StoreSettingsService } from '../../../shared/services/store-settings.service';
+import { PDF_COLOR, TYPO, drawContinuationMark, drawLetterhead, drawSignatures, setType } from '../../../shared/print/print-branding';
 
 @Injectable({ providedIn: 'root' })
 export class CotizacionPrintService {
@@ -41,18 +42,18 @@ export class CotizacionPrintService {
     const fmtDate = (s: string) =>
       new Date(s).toLocaleDateString('es-GT', { day: '2-digit', month: '2-digit', year: 'numeric' });
 
-    const page = (): void => { doc.addPage(); y = m; };
+    const page = (): void => { doc.addPage(); y = drawContinuationMark(doc); };
     const need = (h: number): void => { if (y + h > pH - m) page(); };
     const divider = (): void => {
       doc.setDrawColor(200); doc.line(m, y, rEdge, y); y += 5;
     };
     const labelVal = (label: string, val: string): void => {
-      doc.setFontSize(9);
+      setType(doc, TYPO.body);
       doc.setFont('helvetica', 'bold');   doc.text(label, m, y);
       doc.setFont('helvetica', 'normal');
-      const lines = doc.splitTextToSize(val, rEdge - (m + 30)) as string[];
-      doc.text(lines, m + 30, y);
-      y += Math.max(1, lines.length) * 5;
+      const lines = doc.splitTextToSize(val, rEdge - (m + 34)) as string[];
+      doc.text(lines, m + 34, y);
+      y += Math.max(1, lines.length) * 6;
     };
 
     const statusLabels: Record<string, string> = {
@@ -64,39 +65,18 @@ export class CotizacionPrintService {
       CASH: 'Efectivo', CARD: 'Tarjeta', TRANSFER: 'Transferencia', VISACUOTAS: 'Visa Cuotas',
     };
 
-    // ── Header ──────────────────────────────────────────────────────────────
-    doc.setFontSize(15);
-    doc.setFont('helvetica', 'bold');
-    doc.setTextColor(200, 90, 26);
-    doc.text(storeName, pW / 2, y, { align: 'center' });
-    y += 6;
-    doc.setFontSize(10);
-    doc.setFont('helvetica', 'normal');
-    doc.setTextColor(100);
-    doc.text('Ventas, diseño y fabricación de muebles', pW / 2, y, { align: 'center' });
-    y += 5;
-    doc.setFontSize(12);
-    doc.setFont('helvetica', 'bold');
-    doc.setTextColor(50);
-    doc.text('Comprobante de Cotización', pW / 2, y, { align: 'center' });
-    y += 5;
-    doc.setFontSize(10);
-    doc.setFont('helvetica', 'normal');
-    doc.setTextColor(80);
-    doc.text(`${order.order_number} · ${statusLabels[order.status] ?? order.status}`, pW / 2, y, { align: 'center' });
-    y += 7;
-    doc.setDrawColor(200, 90, 26);
-    doc.setLineWidth(0.6);
-    doc.line(m, y, rEdge, y);
-    doc.setLineWidth(0.2);
-    y += 6;
+    // ── Membrete ──────────────────────────────────────────────────────────────
+    y = drawLetterhead(doc, {
+      storeName,
+      docTitle: 'Comprobante de Cotización',
+      metaLines: [`${order.order_number} · ${statusLabels[order.status] ?? order.status}`],
+    });
 
     // ── Client info ─────────────────────────────────────────────────────────
-    doc.setTextColor(50);
-    doc.setFontSize(8);
-    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(PDF_COLOR.ink);
+    setType(doc, TYPO.section);
     doc.text('INFORMACIÓN DEL CLIENTE', m, y);
-    y += 5;
+    y += 6;
     labelVal('Cliente:', clientName);
     if (clientBusiness)     labelVal('Empresa:', clientBusiness);
     if (clientNit)          labelVal('NIT:', clientNit);
@@ -111,137 +91,132 @@ export class CotizacionPrintService {
     divider();
 
     // ── Items ────────────────────────────────────────────────────────────────
-    doc.setFontSize(8);
-    doc.setFont('helvetica', 'bold');
-    doc.setTextColor(100);
+    setType(doc, TYPO.tableHead);
+    doc.setTextColor(PDF_COLOR.gray);
     doc.text('DESCRIPCIÓN', m, y);
     doc.text('CANT.',    colQty,  y, { align: 'right' });
     doc.text('P.UNIT.',  colUnit, y, { align: 'right' });
     doc.text('SUBTOTAL', rEdge,   y, { align: 'right' });
-    y += 4;
-    doc.setDrawColor(200); doc.line(m, y, rEdge, y); y += 4;
+    y += 5;
+    doc.setDrawColor(200); doc.line(m, y, rEdge, y); y += 5;
 
-    doc.setFont('helvetica', 'normal');
-    doc.setTextColor(50);
+    setType(doc, TYPO.body);
+    doc.setTextColor(PDF_COLOR.ink);
     for (const item of order.items) {
       const descLines = doc.splitTextToSize(item.description, colQty - m - 4) as string[];
-      need(descLines.length * 5 + 2);
+      need(descLines.length * 6 + 2);
       doc.text(descLines, m, y);
       doc.text(String(item.quantity), colQty,  y, { align: 'right' });
       doc.text(fmt(item.unit_price),  colUnit, y, { align: 'right' });
       doc.text(fmt(item.subtotal),    rEdge,   y, { align: 'right' });
-      y += descLines.length * 5;
+      y += descLines.length * 6;
       if (item.notes) {
         const noteLines = doc.splitTextToSize(`  ${item.notes}`, colQty - m - 4) as string[];
-        doc.setFontSize(7.5); doc.setTextColor(140);
-        doc.text(noteLines, m, y); y += noteLines.length * 4.5;
-        doc.setFontSize(9); doc.setTextColor(50);
+        setType(doc, TYPO.note); doc.setTextColor(PDF_COLOR.muted);
+        doc.text(noteLines, m, y); y += noteLines.length * 5;
+        setType(doc, TYPO.body); doc.setTextColor(PDF_COLOR.ink);
       }
     }
 
-    need(16);
-    doc.setDrawColor(180); doc.line(m, y, rEdge, y); y += 5;
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(10);
+    need(18);
+    doc.setDrawColor(180); doc.line(m, y, rEdge, y); y += 6;
+    setType(doc, TYPO.total);
     if (order.agreed_price != null) {
       doc.text('Total calculado', m, y);
       doc.text(fmt(order.total), rEdge, y, { align: 'right' });
-      y += 6;
-      need(8);
-      doc.setTextColor(200, 90, 26);
+      y += 7;
+      need(9);
+      doc.setTextColor(...PDF_COLOR.terracotta);
       doc.text('Total acordado', m, y);
       doc.text(fmt(order.agreed_price), rEdge, y, { align: 'right' });
-      doc.setTextColor(50);
+      doc.setTextColor(PDF_COLOR.ink);
     } else {
       doc.text('TOTAL', m, y);
       doc.text(fmt(order.total), rEdge, y, { align: 'right' });
     }
-    y += 8;
+    y += 9;
     divider();
 
     // ── Payment progress ─────────────────────────────────────────────────────
-    need(20);
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(8);
-    doc.setTextColor(100);
-    doc.text('AVANCE DE PAGO', m, y); y += 5;
+    need(22);
+    setType(doc, TYPO.section);
+    doc.setTextColor(PDF_COLOR.gray);
+    doc.text('AVANCE DE PAGO', m, y); y += 6;
 
-    doc.setFont('helvetica', 'normal');
-    doc.setFontSize(9);
-    doc.setTextColor(50);
+    setType(doc, TYPO.body);
+    doc.setTextColor(PDF_COLOR.ink);
     doc.text(`Pagado: ${fmt(order.total_paid)}`, m, y);
-    doc.setTextColor(200, 90, 26);
+    doc.setTextColor(...PDF_COLOR.terracotta);
     doc.text(`Saldo: ${fmt(balance)}`, rEdge, y, { align: 'right' });
-    doc.setTextColor(50);
-    y += 5;
+    doc.setTextColor(PDF_COLOR.ink);
+    y += 6;
 
     const barW = rEdge - m;
     const filledW = (percent / 100) * barW;
     doc.setFillColor(230, 230, 230); doc.rect(m, y, barW,     3, 'F');
-    doc.setFillColor(200, 90, 26);  doc.rect(m, y, filledW, 3, 'F');
-    y += 6;
-    doc.setFontSize(8); doc.setTextColor(140);
+    doc.setFillColor(...PDF_COLOR.terracotta);  doc.rect(m, y, filledW, 3, 'F');
+    y += 7;
+    setType(doc, TYPO.note); doc.setTextColor(PDF_COLOR.muted);
     doc.text(
       `${percent}% pagado${order.agreed_price != null ? ' (sobre total acordado)' : ''}`,
       rEdge, y, { align: 'right' },
     );
-    y += 7;
+    y += 8;
 
     // ── Payments received ────────────────────────────────────────────────────
     if (order.payments.length > 0) {
-      need(12);
+      need(14);
       divider();
-      doc.setFont('helvetica', 'bold');
-      doc.setFontSize(8);
-      doc.setTextColor(100);
-      doc.text('PAGOS RECIBIDOS', m, y); y += 5;
+      setType(doc, TYPO.section);
+      doc.setTextColor(PDF_COLOR.gray);
+      doc.text('PAGOS RECIBIDOS', m, y); y += 6;
 
       const colMethod = m + 40;
       const colBy     = m + 80;
+      setType(doc, TYPO.tableHead);
       doc.setTextColor(130);
       doc.text('FECHA',        m,         y);
       doc.text('MÉTODO',       colMethod, y);
       doc.text('RECIBIDO POR', colBy,     y);
       doc.text('MONTO',        rEdge,     y, { align: 'right' });
-      y += 4;
-      doc.setDrawColor(220); doc.line(m, y, rEdge, y); y += 4;
+      y += 5;
+      doc.setDrawColor(220); doc.line(m, y, rEdge, y); y += 5;
 
-      doc.setFont('helvetica', 'normal');
-      doc.setFontSize(9);
-      doc.setTextColor(50);
+      setType(doc, TYPO.body);
+      doc.setTextColor(PDF_COLOR.ink);
       for (const p of order.payments) {
-        need(7);
+        need(8);
         doc.text(new Date(p.created_at).toLocaleDateString('es-GT'), m, y);
         doc.text(payLabels[p.payment_method] ?? p.payment_method,    colMethod, y);
         doc.text(p.received_by.full_name,                             colBy,     y);
         doc.text(fmt(p.amount),                                       rEdge,     y, { align: 'right' });
-        y += 5;
+        y += 6;
       }
       y += 2;
     }
 
     // ── Client notes ─────────────────────────────────────────────────────────
     if (order.client_notes) {
-      need(14);
+      need(16);
       divider();
-      doc.setFont('helvetica', 'bold');
-      doc.setFontSize(8);
-      doc.setTextColor(100);
-      doc.text('NOTAS PARA EL CLIENTE', m, y); y += 5;
-      doc.setFont('helvetica', 'normal');
-      doc.setFontSize(9);
-      doc.setTextColor(50);
+      setType(doc, TYPO.section);
+      doc.setTextColor(PDF_COLOR.gray);
+      doc.text('NOTAS PARA EL CLIENTE', m, y); y += 6;
+      setType(doc, TYPO.body);
+      doc.setTextColor(PDF_COLOR.ink);
       const noteLines = doc.splitTextToSize(order.client_notes, rEdge - m) as string[];
-      need(noteLines.length * 5 + 4);
-      doc.text(noteLines, m, y); y += noteLines.length * 5 + 4;
+      need(noteLines.length * 6 + 4);
+      doc.text(noteLines, m, y); y += noteLines.length * 6 + 4;
     }
+
+    // ── Firmas ────────────────────────────────────────────────────────────────
+    drawSignatures(doc, y);
 
     // ── Footer ───────────────────────────────────────────────────────────────
     const footerY = pH - 14;
     doc.setDrawColor(220); doc.line(m, footerY - 4, rEdge, footerY - 4);
-    doc.setFont('helvetica', 'normal');
-    doc.setFontSize(7.5);
-    doc.setTextColor(160);
+    setType(doc, TYPO.note);
+    doc.setTextColor(PDF_COLOR.faint);
     const fmtDt = printedAt.toLocaleDateString('es-GT') + ' ' +
       printedAt.toLocaleTimeString('es-GT', { hour: '2-digit', minute: '2-digit' });
     doc.text(`Documento generado el ${fmtDt}`, pW / 2, footerY - 1, { align: 'center' });
