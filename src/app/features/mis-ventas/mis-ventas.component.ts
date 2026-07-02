@@ -75,7 +75,10 @@ export class MisVentasComponent implements OnInit {
   };
 
   ngOnInit(): void {
-    const today = new Date().toISOString().split('T')[0];
+    // "Hoy" en hora de Guatemala (UTC-6), no UTC: así las ventas del día no
+    // desaparecen entre las 18:00 y medianoche, cuando el reloj UTC ya avanzó
+    // al día siguiente (mismo criterio que el backend).
+    const today = new Date(Date.now() - 6 * 3600 * 1000).toISOString().split('T')[0];
     this.isLoading.set(true);
     this.api.getMySales(today).subscribe({
       next: res => {
